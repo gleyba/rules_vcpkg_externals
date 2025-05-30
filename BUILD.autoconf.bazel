@@ -1,0 +1,53 @@
+load("@//:postprocess_autoconf.bzl", "postprocess_autoconf", "select_binary")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "all_srcs",
+    srcs = glob(
+        include = ["**"],
+        exclude = ["*.bazel"],
+    ),
+)
+
+_SCRIPTS = [
+    "autoconf",
+    "autoheader",
+    "autom4te",
+    "autoreconf",
+    "autoscan",
+    "autoupdate",
+    "ifnames",
+]
+
+configure_make(
+    name = "autoconf",
+    env = select({
+        "@platforms//os:macos": {
+            "AR": "",
+        },
+        "//conditions:default": {},
+    }),
+    configure_in_place = True,
+    lib_source = ":all_srcs",
+    out_binaries = _SCRIPTS,
+    out_data_dirs = [
+        "share",
+    ],
+)
+
+postprocess_autoconf(
+    name = "postprocess_autoconf",
+    srcs = ":autoconf",
+    prefix = "out/autoconf",
+    scripts = _SCRIPTS,
+    visibility = ["//visibility:public"]
+)
+
+select_binary(
+    name = "autoconf_bin",
+    srcs = ":postprocess_autoconf",
+    postfix = "bin/autoconf",
+    visibility = ["//visibility:public"],
+)

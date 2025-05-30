@@ -1,0 +1,72 @@
+diff --git bin/autom4te.in bin/autom4te.in
+index 7ebe419..fbd5a6a 100644
+--- bin/autom4te.in
++++ bin/autom4te.in
+@@ -26,6 +26,9 @@ use 5.006;
+ use strict;
+ use warnings FATAL => 'all';
+ 
++use Cwd qw(abs_path);
++use File::Basename;
++
+ BEGIN
+ {
+   my $pkgdatadir = $ENV{'autom4te_perllibdir'} || '@pkgdatadir@';
+@@ -397,7 +400,17 @@ Try '$me --help' for more information."
+   # a pain since it introduces a useless difference in the path which
+   # invalidates the cache.  And strip '.' which is implicit and always
+   # first.
+-  @include = grep { !/^\.$/ } uniq (reverse(@prepend_include), @include);
++  my @include_raw;
++  @include_raw = grep { !/^\.$/ } uniq (reverse(@prepend_include), @include_raw);
++  my @include_mapped;
++  for my $include (@include_raw) {
++    if (index($include, '__AUTOTOOLS_DIR__') == 0) {
++      push @include_mapped, (abs_path(dirname(__FILE__) . "/..") . substr($include, 17));
++    } else {
++      push @include_mapped, $include;
++    }
++  }
++  @include = @include_mapped;
+ 
+   # Convert @trace to %trace, and work around the M4 builtins tracing
+   # problem.
+diff --git lib/autom4te.in lib/autom4te.in
+index 9e86c9f..be79257 100644
+--- lib/autom4te.in
++++ lib/autom4te.in
+@@ -115,7 +115,7 @@ end-language: "Autoreconf-preselections"
+ # This intermediate language is used by aclocal to build aclocal.m4.
+ 
+ begin-language: "Autoconf-without-aclocal-m4"
+-args: --prepend-include '@pkgdatadir@'
++args: --prepend-include '__AUTOTOOLS_DIR__/share/autoconf'
+ args: --cache=autom4te.cache
+ args: autoconf/autoconf.m4f
+ args: acsite.m4?
+@@ -142,7 +142,7 @@ end-language: "Autoconf"
+ ## -------- ##
+ 
+ begin-language: "Autotest"
+-args: --prepend-include '@pkgdatadir@'
++args: --prepend-include '__AUTOTOOLS_DIR__/share/autoconf'
+ args: autotest/autotest.m4f
+ args: package.m4?
+ args: local.at?
+@@ -156,7 +156,7 @@ end-language: "Autotest"
+ ## ---- ##
+ 
+ begin-language: "M4sh"
+-args: --prepend-include '@pkgdatadir@'
++args: --prepend-include '__AUTOTOOLS_DIR__/share/autoconf'
+ args: m4sugar/m4sh.m4f
+ args: --mode 777
+ args: --language M4sugar
+@@ -168,6 +168,6 @@ end-language: "M4sh"
+ ## ------- ##
+ 
+ begin-language: "M4sugar"
+-args: --prepend-include '@pkgdatadir@'
++args: --prepend-include '__AUTOTOOLS_DIR__/share/autoconf'
+ args: m4sugar/m4sugar.m4f
+ end-language: "M4sugar"

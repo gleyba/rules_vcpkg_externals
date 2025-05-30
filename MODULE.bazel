@@ -1,0 +1,88 @@
+module(
+    name = "rules_vcpkg_externals",
+    version = "0.0.0",
+    bazel_compatibility = [">=7.0.0"],
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "rules_pkg", version = "1.1.0")
+bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
+bazel_dep(name = "rules_perl", version = "0.4.1")
+
+single_version_override(
+    module_name = "rules_foreign_cc",
+    version = "0.14.0",
+    patches = [
+        "//patches:rules_foreign_cc.patch",
+    ],
+)
+
+bazel_dep(name = "toolchains_llvm", version = "1.4.0")
+
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+
+LLVM_VERSIONS = {
+    "": "16.0.0",
+    "darwin-aarch64": "16.0.5",
+    "darwin-x86_64": "15.0.7",
+}
+
+llvm.toolchain(
+    name = "llvm_toolchain",
+    cxx_standard = {"": "c++17"},
+    llvm_versions = LLVM_VERSIONS,
+)
+
+use_repo(llvm, "llvm_toolchain")
+register_toolchains("@llvm_toolchain//:all")
+
+bazel_dep(name = "rules_m4", version = "0.3")
+
+m4 = use_extension(
+    "@rules_m4//m4/extensions:m4_repository_ext.bzl",
+    "m4_repository_ext",
+)
+m4.repository(
+    name = "m4",
+    version = "1.4.17",
+    extra_copts = ["-O3"],
+)
+use_repo(m4, "m4")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "autoconf",
+    build_file = "//:BUILD.autoconf.bazel",
+    strip_prefix = "autoconf-2.71",
+    urls = [
+        "https://mirror.bazel.build/ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz",
+        "https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz",
+    ],
+    patches = [
+        "//patches:autoconf.patch",
+    ],
+    sha256 = "431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c",
+)
+
+http_archive(
+    name = "automake",
+    build_file = "//:BUILD.automake.bazel",
+    strip_prefix = "automake-1.16.4",
+    urls = [
+        "https://mirror.bazel.build/ftp.gnu.org/gnu/automake/automake-1.16.4.tar.gz",
+        "https://ftp.gnu.org/gnu/automake/automake-1.16.4.tar.gz",
+    ],
+    sha256 = "8a0f0be7aaae2efa3a68482af28e5872d8830b9813a6a932a2571eac63ca1794",
+)
+
+bazel_dep(name = "rules_python", version = "1.4.1")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.13",
+    is_default = True,
+)
+
+bazel_dep(name = "aspect_rules_py", version = "1.5.0")

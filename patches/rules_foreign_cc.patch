@@ -1,0 +1,59 @@
+diff --git foreign_cc/built_tools/make_build.bzl foreign_cc/built_tools/make_build.bzl
+index b784dce..2e70ebf 100644
+--- foreign_cc/built_tools/make_build.bzl
++++ foreign_cc/built_tools/make_build.bzl
+@@ -95,7 +95,7 @@ def _make_tool_impl(ctx):
+             ]
+ 
+         env.update({
+-            "AR": absolute_ar,
++            "AR": "", # absolute_ar,
+             "ARFLAGS": _join_flags_list(ctx.workspace_name, arflags),
+             "CC": absolute_cc,
+             "CFLAGS": _join_flags_list(ctx.workspace_name, non_sysroot_cflags),
+@@ -106,7 +106,7 @@ def _make_tool_impl(ctx):
+         configure_env = " ".join(["%s=\"%s\"" % (key, value) for key, value in env.items()])
+         script = [
+             "%s ./configure %s" % (configure_env, " ".join(configure_options)),
+-            "cat build.cfg",
++            # "cat build.cfg",
+             "./build.sh",
+         ] + install_cmd
+ 
+diff --git foreign_cc/repositories.bzl foreign_cc/repositories.bzl
+index a990805..16b670c 100644
+--- foreign_cc/repositories.bzl
++++ foreign_cc/repositories.bzl
+@@ -10,7 +10,7 @@ def rules_foreign_cc_dependencies(
+         native_tools_toolchains = [],
+         register_default_tools = True,
+         cmake_version = "3.23.2",
+-        make_version = "4.4.1",
++        make_version = "4.2.1",
+         ninja_version = "1.12.1",
+         meson_version = "1.5.1",
+         pkgconfig_version = "0.29.2",
+diff --git toolchains/built_toolchains.bzl toolchains/built_toolchains.bzl
+index e2b5e5e..0a7810f 100644
+--- toolchains/built_toolchains.bzl
++++ toolchains/built_toolchains.bzl
+@@ -124,6 +124,19 @@ def _make_toolchain(version, register_toolchains):
+         )
+         return
+ 
++    if version == "4.2.1":
++        maybe(
++            http_archive,
++            name = "gnumake_src",
++            build_file_content = _ALL_CONTENT,
++            sha256 = "e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7",
++            strip_prefix = "make-4.2.1",
++            urls = [
++                "https://ftp.gnu.org/gnu/make/make-4.2.1.tar.gz",
++            ],
++        )
++        return
++
+     fail("Unsupported make version: " + str(version))
+ 
+ def _ninja_toolchain(version, register_toolchains):

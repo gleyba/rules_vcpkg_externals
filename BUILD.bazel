@@ -1,0 +1,47 @@
+load("@aspect_rules_py//py:defs.bzl", "py_binary")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
+load("@rules_pkg//pkg/private/zip:zip.bzl", "pkg_zip")
+
+pkg_files(
+    name = "m4_files",
+    srcs = ["@m4//bin:m4"],
+    prefix = "bin/",
+)
+
+pkg_zip(
+    name = "m4_zip",
+    srcs = [":m4_files"],
+    out = "m4.arm64.zip",
+)
+
+genrule(
+    name = "copy_make_bin",
+    srcs = [ "@rules_foreign_cc//toolchains/private:make_tool" ],
+    outs = [ "make" ],
+    cmd = "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
+)
+
+pkg_files(
+    name = "make_files",
+    srcs = [":copy_make_bin"],
+    prefix = "bin/",
+)
+
+pkg_zip(
+    name = "make_zip",
+    srcs = [":make_files"],
+    out = "make.arm64.zip",
+)
+
+py_binary(
+    name = "postprocess_autoconf_bin",
+    main = "postprocess_autoconf.py",
+    srcs = ["postprocess_autoconf.py"],
+    visibility = ["//visibility:public"]
+)
+
+pkg_zip(
+    name = "autoconf_zip",
+    srcs = ["@autoconf//:postprocess_autoconf"],
+    out = "autoconf.zip",
+)
