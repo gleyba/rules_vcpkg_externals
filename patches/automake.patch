@@ -1,0 +1,22 @@
+diff --git lib/Automake/Config.in lib/Automake/Config.in
+index d529f1b..883b415 100644
+--- lib/Automake/Config.in
++++ lib/Automake/Config.in
+@@ -22,6 +22,8 @@ use strict;
+ use warnings FATAL => 'all';
+ 
+ use Exporter;
++use Cwd qw(abs_path);
++use File::Basename;
+ 
+ our @ISA = qw (Exporter);
+ our @EXPORT = qw ($APIVERSION $PACKAGE $PACKAGE_BUGREPORT $VERSION
+@@ -34,7 +36,7 @@ our $PACKAGE = '@PACKAGE@';
+ our $PACKAGE_BUGREPORT = '@PACKAGE_BUGREPORT@';
+ our $VERSION = '@VERSION@';
+ our $RELEASE_YEAR = '@RELEASE_YEAR@';
+-our $libdir = $ENV{"AUTOMAKE_LIBDIR"} || '@datadir@/@PACKAGE@-@APIVERSION@';
++our $libdir = $ENV{"AUTOMAKE_LIBDIR"} || abs_path(dirname(abs_path(__FILE__)) . '/../../@PACKAGE@-@APIVERSION@');
+ 
+ our $perl_threads = 0;
+ # We need at least this version for CLONE support.

@@ -1,10 +1,12 @@
-load("@aspect_rules_py//py:defs.bzl", "py_binary")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "pkg_attributes")
 load("@rules_pkg//pkg/private/zip:zip.bzl", "pkg_zip")
+
+load("//rules:postprocess_auto_stuff.bzl", "postprocess_auto_stuff")
 
 pkg_files(
     name = "m4_files",
     srcs = ["@m4//bin:m4"],
+    attributes = pkg_attributes(mode = "0755"),
     prefix = "bin/",
 )
 
@@ -33,15 +35,32 @@ pkg_zip(
     out = "make.arm64.zip",
 )
 
-py_binary(
-    name = "postprocess_autoconf_bin",
-    main = "postprocess_autoconf.py",
-    srcs = ["postprocess_autoconf.py"],
-    visibility = ["//visibility:public"]
+postprocess_auto_stuff(
+    name = "postprocess_autoconf",
+    srcs = "@autoconf//:autoconf",
+    prefix = "autoconf",
+    output = "autoconf",
+    visibility = ["@automake//:__pkg__"],
 )
 
 pkg_zip(
     name = "autoconf_zip",
-    srcs = ["@autoconf//:postprocess_autoconf"],
+    srcs = [":postprocess_autoconf"],
     out = "autoconf.zip",
+)
+
+postprocess_auto_stuff(
+    name = "postprocess_automake",
+    srcs = "@automake//:automake",
+    prefix = "automake",
+    output = "automake",
+    bin_postfixes = {
+        "bin/autoconf/bin/autoconf": "/../autoconf/bin/autoconf",
+    },
+)
+
+pkg_zip(
+    name = "automake_zip",
+    srcs = [":postprocess_automake"],
+    out = "automake.zip",
 )

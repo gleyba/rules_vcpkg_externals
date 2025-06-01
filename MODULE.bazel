@@ -8,7 +8,6 @@ module(
 bazel_dep(name = "platforms", version = "0.0.11")
 bazel_dep(name = "rules_pkg", version = "1.1.0")
 bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
-bazel_dep(name = "rules_perl", version = "0.4.1")
 
 single_version_override(
     module_name = "rules_foreign_cc",
@@ -45,8 +44,7 @@ m4 = use_extension(
 )
 m4.repository(
     name = "m4",
-    version = "1.4.17",
-    extra_copts = ["-O3"],
+    version = "1.4.18",
 )
 use_repo(m4, "m4")
 
@@ -54,7 +52,7 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 
 http_archive(
     name = "autoconf",
-    build_file = "//:BUILD.autoconf.bazel",
+    build_file = "//third_party:BUILD.autoconf.bazel",
     strip_prefix = "autoconf-2.71",
     urls = [
         "https://mirror.bazel.build/ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz",
@@ -68,11 +66,14 @@ http_archive(
 
 http_archive(
     name = "automake",
-    build_file = "//:BUILD.automake.bazel",
+    build_file = "//third_party:BUILD.automake.bazel",
     strip_prefix = "automake-1.16.4",
     urls = [
         "https://mirror.bazel.build/ftp.gnu.org/gnu/automake/automake-1.16.4.tar.gz",
         "https://ftp.gnu.org/gnu/automake/automake-1.16.4.tar.gz",
+    ],
+    patches = [
+        "//patches:automake.patch",
     ],
     sha256 = "8a0f0be7aaae2efa3a68482af28e5872d8830b9813a6a932a2571eac63ca1794",
 )

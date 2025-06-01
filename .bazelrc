@@ -11,3 +11,5 @@ test --incompatible_exclusive_test_sandboxed
 test --build_tests_only
 
 try-import %workspace%/.user.bazelrc
+
+build --override_repository=+_repo_rules+m4=/Users/gleyba/Develop/tmp/vcpkg_experiment/tmp/+_repo_rules+m4

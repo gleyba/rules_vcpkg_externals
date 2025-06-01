@@ -1,4 +1,3 @@
-load("@//:postprocess_autoconf.bzl", "postprocess_autoconf", "select_binary")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
 
 package(default_visibility = ["//visibility:public"])
@@ -35,19 +34,4 @@ configure_make(
     out_data_dirs = [
         "share",
     ],
-)
-
-postprocess_autoconf(
-    name = "postprocess_autoconf",
-    srcs = ":autoconf",
-    prefix = "out/autoconf",
-    scripts = _SCRIPTS,
-    visibility = ["//visibility:public"]
-)
-
-select_binary(
-    name = "autoconf_bin",
-    srcs = ":postprocess_autoconf",
-    postfix = "bin/autoconf",
-    visibility = ["//visibility:public"],
 )
