@@ -1,0 +1,35 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "configure_make")
+
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "all_srcs",
+    srcs = glob(
+        include = ["**"],
+        exclude = ["*.bazel"],
+    ),
+)
+
+configure_make(
+    name = "libtool",
+    build_data = [
+        "@//scripts:ar_wrapper",
+    ],
+    env = select({
+        "@platforms//os:macos": {
+            "AR": "$$EXT_BUILD_ROOT/$(location @//scripts:ar_wrapper)",
+        },
+        "//conditions:default": {},
+    }),
+    configure_in_place = True, 
+    install_prefix = "install",
+    lib_source = ":all_srcs",
+    out_binaries = [
+        "libtool",
+        "libtoolize",
+    ],
+    out_data_dirs = [
+        "share",
+        "lib",
+    ],
+)

@@ -1,0 +1,5 @@
+sh_binary(
+    name = "ar_wrapper",
+    srcs = ["ar_wrapper.sh"],
+    visibility = ["//visibility:public"],
+)

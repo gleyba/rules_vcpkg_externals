@@ -3,53 +3,70 @@ import shutil
 import argparse
 
 def postprocess_search_prefixes(line, search_prefixes, is_sh, is_perl):
-    changed = False
+    need_imports = False
     for search_prefix, addition in search_prefixes.items():
         build_dir_pos = line.find(search_prefix)
         if build_dir_pos == -1:
             continue
 
-        changed = True
         root_start_pos = line.find("'/private")
         if root_start_pos == -1:
             raise Exception("Can't postprocess line: %s" % line)
 
         if is_sh:
-            line = "".join([
+            line_parts = [
                 line[:root_start_pos],
-                "$(dirname \"$(readlink -f \"$0\")\")'/..",
-                addition,
-                line[build_dir_pos + len(search_prefix):],
-            ])
+            ]
+            if addition.startswith("__BIN_DIR__"):
+                line_parts += [
+                    "$(dirname \"$(readlink -f \"$0\")\")'",
+                    addition[len("__BIN_DIR__"):],
+                ]
+            else:
+                line_parts.append(addition)
+
+            line_parts.append(line[build_dir_pos + len(search_prefix):])
+
+            line = "".join(line_parts)
         elif is_perl:
+            need_imports = True
             next_apostrofe_pos = line.find("'", build_dir_pos)
             if next_apostrofe_pos == -1:
                 raise Exception("Can't postprocess line: %s" % line)
-
-            line = "".join([
+            
+            line_parts = [
                 line[:root_start_pos],
-                "(abs_path(dirname(abs_path(__FILE__)) . \"/..",
-                addition,
-                "\") . '",
+            ]
+            if addition.startswith("__BIN_DIR__"):
+                line_parts += [
+                    "(abs_path(dirname(abs_path(__FILE__)) . \"",
+                    addition[len("__BIN_DIR__"):],
+                    "\") . '",
+                ]
+                need_imports = True
+            else:
+                line_parts += [
+                    "(\"",
+                    addition,
+                    "\" . '",
+                ]
+
+            line_parts += [
                 line[build_dir_pos + len(search_prefix):next_apostrofe_pos + 1],
                 ")",
                 line[next_apostrofe_pos + 1:],
-            ])
+            ]
 
-    return line, changed
+            line = "".join(line_parts)
 
-def postprocess_auto_stuff(prefix, bin_postfixes, directories, scripts):
+    return line, need_imports
+
+def postprocess_auto_stuff(bin_postfixes, directories, scripts):
     for dst, src in directories.items():
         if not os.listdir(src):
             continue
 
         shutil.copytree(src, dst, dirs_exist_ok=True)
-
-    build_tmpdir_str = "{prefix}.build_tmpdir/{prefix}".format(prefix=prefix)
-
-    search_prefixes = {
-        build_tmpdir_str: "",
-    } | bin_postfixes
 
     for dst, src in scripts.items():
         os.makedirs(os.path.dirname(dst), exist_ok=True)
@@ -90,15 +107,15 @@ def postprocess_auto_stuff(prefix, bin_postfixes, directories, scripts):
                         need_abs_path = True
                         continue
 
-                line, is_modified = postprocess_search_prefixes(
+                line, need_imports = postprocess_search_prefixes(
                     line, 
-                    search_prefixes, 
+                    bin_postfixes, 
                     is_sh, 
                     is_perl,
                 )
 
-                need_file_basename |= is_modified
-                need_abs_path |= is_modified
+                need_file_basename |= need_imports
+                need_abs_path |= need_imports
 
                 content.append(line)
 
@@ -150,7 +167,6 @@ def main():
         }
 
     postprocess_auto_stuff(
-        arg.prefix,
         to_dict(arg.bin_postfix),
         to_dict(arg.dir),
         to_dict(arg.script),

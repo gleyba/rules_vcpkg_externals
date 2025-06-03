@@ -1,6 +1,7 @@
 load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "pkg_attributes")
 load("@rules_pkg//pkg/private/zip:zip.bzl", "pkg_zip")
 
+load("//rules:install_zips.bzl", "install_zips")
 load("//rules:postprocess_auto_stuff.bzl", "postprocess_auto_stuff")
 
 pkg_files(
@@ -13,7 +14,7 @@ pkg_files(
 pkg_zip(
     name = "m4_zip",
     srcs = [":m4_files"],
-    out = "m4.arm64.zip",
+    out = "m4.zip",
 )
 
 genrule(
@@ -32,7 +33,7 @@ pkg_files(
 pkg_zip(
     name = "make_zip",
     srcs = [":make_files"],
-    out = "make.arm64.zip",
+    out = "make.zip",
 )
 
 postprocess_auto_stuff(
@@ -40,6 +41,9 @@ postprocess_auto_stuff(
     srcs = "@autoconf//:autoconf",
     prefix = "autoconf",
     output = "autoconf",
+    bin_postfixes = {
+        "autoconf.build_tmpdir/autoconf": "__BIN_DIR__/..",
+    },
     visibility = ["@automake//:__pkg__"],
 )
 
@@ -55,7 +59,8 @@ postprocess_auto_stuff(
     prefix = "automake",
     output = "automake",
     bin_postfixes = {
-        "bin/autoconf/bin/autoconf": "/../autoconf/bin/autoconf",
+        "automake.build_tmpdir/automake": "__BIN_DIR__/..",
+        "bin/autoconf/bin/autoconf": "__BIN_DIR__/../../autoconf/bin/autoconf",
     },
 )
 
@@ -63,4 +68,20 @@ pkg_zip(
     name = "automake_zip",
     srcs = [":postprocess_automake"],
     out = "automake.zip",
+)
+
+# pkg_zip(
+#     name = "libtool_zip",
+#     srcs = ["@libtool//:libtool"],
+#     out = "libtool.zip",
+# )
+
+install_zips(
+    name = "install_zips",
+    zips = [
+        ":m4_zip",
+        ":make_zip",
+        ":autoconf_zip",
+        ":automake_zip",
+    ],
 )
