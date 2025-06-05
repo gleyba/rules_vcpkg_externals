@@ -39,10 +39,12 @@ pkg_zip(
 postprocess_auto_stuff(
     name = "postprocess_autoconf",
     srcs = "@autoconf//:autoconf",
-    prefix = "autoconf",
     output = "autoconf",
     bin_postfixes = {
         "autoconf.build_tmpdir/autoconf": "__BIN_DIR__/..",
+    },
+    replace_in_bin = {
+        "/usr/bin/": "/usr/bin/env ",
     },
     visibility = ["@automake//:__pkg__"],
 )
@@ -56,11 +58,13 @@ pkg_zip(
 postprocess_auto_stuff(
     name = "postprocess_automake",
     srcs = "@automake//:automake",
-    prefix = "automake",
     output = "automake",
     bin_postfixes = {
         "automake.build_tmpdir/automake": "__BIN_DIR__/..",
         "bin/autoconf/bin/autoconf": "__BIN_DIR__/../../autoconf/bin/autoconf",
+    },
+    replace_in_bin = {
+        "/usr/bin/": "/usr/bin/env" ,
     },
 )
 
@@ -70,11 +74,26 @@ pkg_zip(
     out = "automake.zip",
 )
 
-# pkg_zip(
-#     name = "libtool_zip",
-#     srcs = ["@libtool//:libtool"],
-#     out = "libtool.zip",
-# )
+postprocess_auto_stuff(
+    name = "postprocess_libtool",
+    srcs = "@libtool//:libtool",
+    output = "libtool",
+    bin_postfixes = {
+        "bin/scripts/ar_wrapper": "\"/usr/bin/env ar",
+        "llvm_toolchain/bin/cc_wrapper.sh": "\"/usr/bin/env clang",
+        "toolchain_llvm/lib/clang/16 ": "\"",
+        "libtool.build_tmpdir/install": "__BIN_DIR__/..",
+    },
+    replace_in_bin = {
+        "/usr/bin/": "/usr/bin/env ",
+    },
+)
+
+pkg_zip(
+    name = "libtool_zip",
+    srcs = [":postprocess_libtool"],
+    out = "libtool.zip",
+)
 
 install_zips(
     name = "install_zips",
@@ -83,5 +102,6 @@ install_zips(
         ":make_zip",
         ":autoconf_zip",
         ":automake_zip",
+        ":libtool_zip",
     ],
 )

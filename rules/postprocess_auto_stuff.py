@@ -10,6 +10,11 @@ def postprocess_search_prefixes(line, search_prefixes, is_sh, is_perl):
             continue
 
         root_start_pos = line.find("'/private")
+        start_sign = "'"
+        if root_start_pos == -1:
+            root_start_pos = line.find("\"/private")
+            start_sign = "\""
+
         if root_start_pos == -1:
             raise Exception("Can't postprocess line: %s" % line)
 
@@ -19,7 +24,8 @@ def postprocess_search_prefixes(line, search_prefixes, is_sh, is_perl):
             ]
             if addition.startswith("__BIN_DIR__"):
                 line_parts += [
-                    "$(dirname \"$(readlink -f \"$0\")\")'",
+                    "$(dirname \"$(readlink -f \"$0\")\")",
+                    start_sign,
                     addition[len("__BIN_DIR__"):],
                 ]
             else:
@@ -41,7 +47,8 @@ def postprocess_search_prefixes(line, search_prefixes, is_sh, is_perl):
                 line_parts += [
                     "(abs_path(dirname(abs_path(__FILE__)) . \"",
                     addition[len("__BIN_DIR__"):],
-                    "\") . '",
+                    "\") . ",
+                    start_sign,
                 ]
                 need_imports = True
             else:
@@ -61,7 +68,12 @@ def postprocess_search_prefixes(line, search_prefixes, is_sh, is_perl):
 
     return line, need_imports
 
-def postprocess_auto_stuff(bin_postfixes, directories, scripts):
+def postprocess_auto_stuff(
+        bin_postfixes,
+        replace_in_bin,
+        directories,
+        scripts,
+    ):
     for dst, src in directories.items():
         if not os.listdir(src):
             continue
@@ -93,8 +105,10 @@ def postprocess_auto_stuff(bin_postfixes, directories, scripts):
                         line = "#!/usr/bin/env perl\n"
                     else:
                         raise Exception("Unknown file type: %s" % src)
-                elif "/usr/bin/" in line:
-                    line = line.replace("/usr/bin/", "/usr/bin/env ")
+                else:
+                    for key, value in replace_in_bin.items():
+                        if key in line:
+                            line = line.replace(key, value)
 
                 if is_perl and line.startswith("use "):
                     if use_line_idx == None:
@@ -145,6 +159,11 @@ def main():
         help="Binaries postfixes to search and replace with relative paths.",
     )
     parser.add_argument(
+        "--replace-in-bin", 
+        action="append",
+        help="Keys and values to search and replace in binaries.",
+    )
+    parser.add_argument(
         "--dir", 
         action="append",
         help="Directories to copy.",
@@ -168,6 +187,7 @@ def main():
 
     postprocess_auto_stuff(
         to_dict(arg.bin_postfix),
+        to_dict(arg.replace_in_bin),
         to_dict(arg.dir),
         to_dict(arg.script),
     )

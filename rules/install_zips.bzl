@@ -5,8 +5,9 @@ def _install_zips_impl(ctx):
     ctx.actions.write(
         output = output,
         content = "\n".join([
-            "#!/bin/env bash",
+            "#!/usr/bin/env bash",
             "set -euo pipefail",
+            "mkdir -p $1",
         ] + [
             "install %s $1" % zip_file.basename 
             for zip_file in ctx.files.zips
@@ -21,6 +22,7 @@ def _install_zips_impl(ctx):
 
 install_zips = rule(
     implementation = _install_zips_impl,
+    executable = True,
     attrs = {
         "zips": attr.label_list(
             mandatory = True,

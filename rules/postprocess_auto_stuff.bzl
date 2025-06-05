@@ -2,9 +2,11 @@ def _postprocess_auto_stuff_impl(ctx):
     """Postprocess autoconf files."""
     args = ctx.actions.args()
 
-    args.add("--prefix", ctx.attr.prefix)
     for postfix, binary in ctx.attr.bin_postfixes.items():
         args.add("--bin-postfix", "%s=%s" % (postfix, binary))
+
+    for key, value in ctx.attr.replace_in_bin.items():
+        args.add("--replace-in-bin", "%s=%s" % (key, value))
 
     output = ctx.actions.declare_directory(ctx.attr.output)
 
@@ -34,12 +36,11 @@ def _postprocess_auto_stuff_impl(ctx):
 postprocess_auto_stuff = rule(
     implementation = _postprocess_auto_stuff_impl,
     attrs = {
-        "prefix": attr.string(
-            mandatory = True,
-            doc = "`build_tmpdir` prefix to search and replace with relative paths.",
-        ),
         "bin_postfixes": attr.string_dict(
             doc = "Binaries postfixes to search and replace with relative paths.",
+        ),
+        "replace_in_bin": attr.string_dict(
+            doc = "Dict of key values to search and replace in binaries.",
         ),
         "srcs": attr.label(
             allow_files = True,
