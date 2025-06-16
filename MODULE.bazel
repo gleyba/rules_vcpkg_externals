@@ -92,6 +92,16 @@ http_archive(
     sha256 = "8a0f0be7aaae2efa3a68482af28e5872d8830b9813a6a932a2571eac63ca1794",
 )
 
+http_archive(
+    name = "gettext",
+    build_file = "//third_party:BUILD.gettext.bazel",
+    strip_prefix = "gettext-0.25",
+    urls = [
+        "https://ftp.gnu.org/pub/gnu/gettext/gettext-0.25.tar.gz",
+    ],
+    sha256 = "aee02dab79d9138fdcc7226b67ec985121bce6007edebe30d0e39d42f69a340e",
+)
+
 bazel_dep(name = "rules_python", version = "1.4.1")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")

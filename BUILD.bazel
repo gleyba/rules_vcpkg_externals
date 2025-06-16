@@ -21,7 +21,10 @@ genrule(
     name = "copy_make_bin",
     srcs = [ "@rules_foreign_cc//toolchains/private:make_tool" ],
     outs = [ "make" ],
-    cmd = "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
+    cmd = " && ".join([
+        "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
+        "chmod +x $@",
+    ]),
 )
 
 pkg_files(
@@ -61,7 +64,7 @@ postprocess_auto_stuff(
     output = "automake",
     bin_postfixes = {
         "automake.build_tmpdir/automake": "__BIN_DIR__/..",
-        "bin/autoconf/bin/autoconf": "__BIN_DIR__/../../autoconf/bin/autoconf",
+        "bin/autoconf/bin/autoconf": "__BIN_DIR__/autoconf",
     },
     replace_in_bin = {
         "/usr/bin/": "/usr/bin/env" ,
@@ -86,6 +89,7 @@ postprocess_auto_stuff(
     },
     replace_in_bin = {
         "/usr/bin/": "/usr/bin/env ",
+        # "with_gcc=yes": "with_gcc=no",
     },
 )
 

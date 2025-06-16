@@ -182,7 +182,7 @@ def main():
         return {
             k: v
             for k, v in 
-            (x.split('=') for x in arg_list)
+            (x.split('|') for x in arg_list)
         }
 
     postprocess_auto_stuff(

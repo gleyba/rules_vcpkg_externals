@@ -3,22 +3,22 @@ def _postprocess_auto_stuff_impl(ctx):
     args = ctx.actions.args()
 
     for postfix, binary in ctx.attr.bin_postfixes.items():
-        args.add("--bin-postfix", "%s=%s" % (postfix, binary))
+        args.add("--bin-postfix", "%s|%s" % (postfix, binary))
 
     for key, value in ctx.attr.replace_in_bin.items():
-        args.add("--replace-in-bin", "%s=%s" % (key, value))
+        args.add("--replace-in-bin", "%s|%s" % (key, value))
 
     output = ctx.actions.declare_directory(ctx.attr.output)
 
     for src in ctx.files.srcs:
         if src.is_directory:
-            args.add("--dir", "%s/%s=%s" % (
+            args.add("--dir", "%s/%s|%s" % (
                 output.path,
                 src.basename,
                 src.path,
             ))
         else:
-            args.add("--script", "%s/bin/%s=%s" % (
+            args.add("--script", "%s/bin/%s|%s" % (
                 output.path,
                 src.basename,
                 src.path,
