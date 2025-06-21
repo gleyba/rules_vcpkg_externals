@@ -99,6 +99,9 @@ http_archive(
     urls = [
         "https://ftp.gnu.org/pub/gnu/gettext/gettext-0.25.tar.gz",
     ],
+    patches = [
+        "//patches:gettext.patch",
+    ],
     sha256 = "aee02dab79d9138fdcc7226b67ec985121bce6007edebe30d0e39d42f69a340e",
 )
 

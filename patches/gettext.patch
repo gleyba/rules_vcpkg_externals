@@ -1,0 +1,357 @@
+diff --git gettext-runtime/configure gettext-runtime/configure
+index abd2611..468f226 100755
+--- gettext-runtime/configure
++++ gettext-runtime/configure
+@@ -42360,10 +42360,6 @@ printf "%s\n" "#define GNULIB_PRINTF_ATTRIBUTE_FLAVOR_GNU 1" >>confdefs.h
+ 
+ 
+ 
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+-
+ 
+ 
+ 
+@@ -60459,21 +60455,6 @@ fi
+ 
+ 
+ 
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+-
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+      if test $REPLACE_WRITE = 1; then
+   GL_COND_OBJ_WRITE_TRUE=
+   GL_COND_OBJ_WRITE_FALSE='#'
+diff --git gettext-runtime/gnulib-m4/stdio_h.m4 gettext-runtime/gnulib-m4/stdio_h.m4
+index 71d8618..38f8cfc 100644
+--- gettext-runtime/gnulib-m4/stdio_h.m4
++++ gettext-runtime/gnulib-m4/stdio_h.m4
+@@ -75,18 +75,12 @@ AC_DEFUN_ONCE([gl_STDIO_H],
+   dnl GNULIB_STDIO_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+   dnl This ifdef is an optimization, to avoid performing a configure check whose
+   dnl result is not used. But it does not make the test of
+   dnl GNULIB_STDIO_H_NONBLOCKING or GNULIB_NONBLOCKING redundant.
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+ 
+   dnl Check for declarations of anything we want to poison if the
+diff --git gettext-runtime/gnulib-m4/write.m4 gettext-runtime/gnulib-m4/write.m4
+index f4b8b46..84416f3 100644
+--- gettext-runtime/gnulib-m4/write.m4
++++ gettext-runtime/gnulib-m4/write.m4
+@@ -11,24 +11,15 @@ AC_DEFUN([gl_FUNC_WRITE],
+   AC_REQUIRE([gl_UNISTD_H_DEFAULTS])
+   m4_ifdef([gl_MSVC_INVAL], [
+     AC_REQUIRE([gl_MSVC_INVAL])
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+   dnl This ifdef is just an optimization, to avoid performing a configure
+   dnl check whose result is not used. It does not make the test of
+   dnl GNULIB_UNISTD_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+ ])
+ 
+diff --git gettext-runtime/intl/gnulib-m4/stdio_h.m4 gettext-runtime/intl/gnulib-m4/stdio_h.m4
+index 71d8618..38f8cfc 100644
+--- gettext-runtime/intl/gnulib-m4/stdio_h.m4
++++ gettext-runtime/intl/gnulib-m4/stdio_h.m4
+@@ -75,18 +75,12 @@ AC_DEFUN_ONCE([gl_STDIO_H],
+   dnl GNULIB_STDIO_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+   dnl This ifdef is an optimization, to avoid performing a configure check whose
+   dnl result is not used. But it does not make the test of
+   dnl GNULIB_STDIO_H_NONBLOCKING or GNULIB_NONBLOCKING redundant.
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+ 
+   dnl Check for declarations of anything we want to poison if the
+diff --git gettext-runtime/libasprintf/gnulib-m4/stdio_h.m4 gettext-runtime/libasprintf/gnulib-m4/stdio_h.m4
+index 71d8618..38f8cfc 100644
+--- gettext-runtime/libasprintf/gnulib-m4/stdio_h.m4
++++ gettext-runtime/libasprintf/gnulib-m4/stdio_h.m4
+@@ -75,18 +75,12 @@ AC_DEFUN_ONCE([gl_STDIO_H],
+   dnl GNULIB_STDIO_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+   dnl This ifdef is an optimization, to avoid performing a configure check whose
+   dnl result is not used. But it does not make the test of
+   dnl GNULIB_STDIO_H_NONBLOCKING or GNULIB_NONBLOCKING redundant.
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+ 
+   dnl Check for declarations of anything we want to poison if the
+diff --git gettext-tools/configure gettext-tools/configure
+index 7f691dc..f211723 100755
+--- gettext-tools/configure
++++ gettext-tools/configure
+@@ -55078,9 +55078,6 @@ printf "%s\n" "#define GNULIB_PRINTF_ATTRIBUTE_FLAVOR_GNU 1" >>confdefs.h
+ 
+ 
+ 
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+ 
+ 
+ 
+@@ -64271,19 +64268,8 @@ fi
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $gl_cv_have_unlimited_file_name_length" >&5
+ printf "%s\n" "$gl_cv_have_unlimited_file_name_length" >&6; }
+ 
+-
+-     if test $gl_cv_have_unlimited_file_name_length = no; then
+-  GL_COND_OBJ_CHDIR_LONG_TRUE=
+-  GL_COND_OBJ_CHDIR_LONG_FALSE='#'
+-else
+-  GL_COND_OBJ_CHDIR_LONG_TRUE='#'
+-  GL_COND_OBJ_CHDIR_LONG_FALSE=
+-fi
+-:
+-    if test -z "${GL_COND_OBJ_CHDIR_LONG_TRUE}" && test -z "${GL_COND_OBJ_CHDIR_LONG_FALSE}"; then
+-    GL_COND_OBJ_CHDIR_LONG_TRUE='#'
+-    GL_COND_OBJ_CHDIR_LONG_FALSE='#'
+-  fi
++GL_COND_OBJ_CHDIR_LONG_TRUE=
++GL_COND_OBJ_CHDIR_LONG_FALSE='#'
+ 
+   if test -z "$GL_COND_OBJ_CHDIR_LONG_TRUE"; then :
+ 
+@@ -93008,25 +92994,6 @@ printf "%s\n" "#define GNULIB_TEST_WMEMPCPY 1" >>confdefs.h
+ 
+ 
+ 
+-
+-
+-
+-
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+-
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+      if test $REPLACE_WRITE = 1; then
+   GL_COND_OBJ_WRITE_TRUE=
+   GL_COND_OBJ_WRITE_FALSE='#'
+@@ -122183,24 +122150,6 @@ fi
+   fi
+ 
+ 
+-
+-
+-
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+-
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+      if test $REPLACE_WRITE = 1; then
+   GL_COND_OBJ_WRITE_TRUE=
+   GL_COND_OBJ_WRITE_FALSE='#'
+diff --git gettext-tools/gnulib-m4/stdio_h.m4 gettext-tools/gnulib-m4/stdio_h.m4
+index 71d8618..38f8cfc 100644
+--- gettext-tools/gnulib-m4/stdio_h.m4
++++ gettext-tools/gnulib-m4/stdio_h.m4
+@@ -75,18 +75,12 @@ AC_DEFUN_ONCE([gl_STDIO_H],
+   dnl GNULIB_STDIO_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+   dnl This ifdef is an optimization, to avoid performing a configure check whose
+   dnl result is not used. But it does not make the test of
+   dnl GNULIB_STDIO_H_NONBLOCKING or GNULIB_NONBLOCKING redundant.
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+ 
+   dnl Check for declarations of anything we want to poison if the
+diff --git gettext-tools/gnulib-m4/write.m4 gettext-tools/gnulib-m4/write.m4
+index f4b8b46..84416f3 100644
+--- gettext-tools/gnulib-m4/write.m4
++++ gettext-tools/gnulib-m4/write.m4
+@@ -11,24 +11,15 @@ AC_DEFUN([gl_FUNC_WRITE],
+   AC_REQUIRE([gl_UNISTD_H_DEFAULTS])
+   m4_ifdef([gl_MSVC_INVAL], [
+     AC_REQUIRE([gl_MSVC_INVAL])
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+   dnl This ifdef is just an optimization, to avoid performing a configure
+   dnl check whose result is not used. It does not make the test of
+   dnl GNULIB_UNISTD_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+ ])
+ 
+diff --git libtextstyle/configure libtextstyle/configure
+index f0907dc..51790a7 100755
+--- libtextstyle/configure
++++ libtextstyle/configure
+@@ -56875,14 +56875,6 @@ fi
+ 
+ 
+ 
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+-
+-
+-
+-
+-
+      if test $REPLACE_WRITE = 1; then
+   GL_COND_OBJ_WRITE_TRUE=
+   GL_COND_OBJ_WRITE_FALSE='#'
+diff --git libtextstyle/gnulib-m4/stdio_h.m4 libtextstyle/gnulib-m4/stdio_h.m4
+index 71d8618..38f8cfc 100644
+--- libtextstyle/gnulib-m4/stdio_h.m4
++++ libtextstyle/gnulib-m4/stdio_h.m4
+@@ -75,18 +75,12 @@ AC_DEFUN_ONCE([gl_STDIO_H],
+   dnl GNULIB_STDIO_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+   dnl This ifdef is an optimization, to avoid performing a configure check whose
+   dnl result is not used. But it does not make the test of
+   dnl GNULIB_STDIO_H_NONBLOCKING or GNULIB_NONBLOCKING redundant.
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_STDIO_WRITE_FUNCS=1
+-    fi
+   ])
+ 
+   dnl Check for declarations of anything we want to poison if the
+diff --git libtextstyle/gnulib-m4/write.m4 libtextstyle/gnulib-m4/write.m4
+index f4b8b46..84416f3 100644
+--- libtextstyle/gnulib-m4/write.m4
++++ libtextstyle/gnulib-m4/write.m4
+@@ -11,24 +11,15 @@ AC_DEFUN([gl_FUNC_WRITE],
+   AC_REQUIRE([gl_UNISTD_H_DEFAULTS])
+   m4_ifdef([gl_MSVC_INVAL], [
+     AC_REQUIRE([gl_MSVC_INVAL])
+-    if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+   dnl This ifdef is just an optimization, to avoid performing a configure
+   dnl check whose result is not used. It does not make the test of
+   dnl GNULIB_UNISTD_H_SIGPIPE or GNULIB_SIGPIPE redundant.
+   m4_ifdef([gl_SIGNAL_SIGPIPE], [
+     gl_SIGNAL_SIGPIPE
+-    if test $gl_cv_header_signal_h_SIGPIPE != yes; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+   m4_ifdef([gl_NONBLOCKING_IO], [
+     gl_NONBLOCKING_IO
+-    if test $gl_cv_have_nonblocking != yes; then
+-      REPLACE_WRITE=1
+-    fi
+   ])
+ ])
+ 
+diff --git libtextstyle/lib/libtextstyle.sym.in libtextstyle/lib/libtextstyle.sym.in
+index b068b7b..28cb2bf 100644
+--- libtextstyle/lib/libtextstyle.sym.in
++++ libtextstyle/lib/libtextstyle.sym.in
+@@ -38,7 +38,6 @@ html_styled_ostream_get_hyperlink_id
+ html_styled_ostream_get_hyperlink_ref
+ html_styled_ostream_set_hyperlink
+ html_styled_ostream_write_mem
+-iconv_ostream_create
+ iconv_ostream_flush
+ iconv_ostream_free
+ iconv_ostream_get_destination

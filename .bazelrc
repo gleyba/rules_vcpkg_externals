@@ -11,3 +11,6 @@ test --incompatible_exclusive_test_sandboxed
 test --build_tests_only
 
 try-import %workspace%/.user.bazelrc
+
+build --copt="-Wno-incompatible-function-pointer-types" 
+build --copt="-Wimplicit-const-int-float-conversion"
