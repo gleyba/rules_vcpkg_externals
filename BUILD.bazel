@@ -23,13 +23,13 @@ genrule(
     outs = [ "make" ],
     cmd = " && ".join([
         "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
-        "chmod +x $@",
     ]),
 )
 
 pkg_files(
     name = "make_files",
     srcs = [":copy_make_bin"],
+    attributes = pkg_attributes(mode = "0755"),
     prefix = "bin/",
 )
 
