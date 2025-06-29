@@ -36,6 +36,16 @@ llvm.toolchain(
 use_repo(llvm, "llvm_toolchain")
 register_toolchains("@llvm_toolchain//:all")
 
+bazel_dep(name = "rules_python", version = "1.4.1")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.13",
+    is_default = True,
+)
+
+bazel_dep(name = "aspect_rules_py", version = "1.5.0")
+
 bazel_dep(name = "rules_m4", version = "0.3")
 
 m4 = use_extension(
@@ -105,12 +115,12 @@ http_archive(
     sha256 = "aee02dab79d9138fdcc7226b67ec985121bce6007edebe30d0e39d42f69a340e",
 )
 
-bazel_dep(name = "rules_python", version = "1.4.1")
-
-python = use_extension("@rules_python//python/extensions:python.bzl", "python")
-python.toolchain(
-    python_version = "3.13",
-    is_default = True,
+http_archive(
+    name = "autoconf_archive",
+    build_file = "//third_party:BUILD.autoconf_archive.bazel",
+    strip_prefix = "autoconf-archive-2024.10.16",
+    urls = [
+        "https://mirrors.ibiblio.org/gnu/autoconf-archive/autoconf-archive-2024.10.16.tar.xz",
+    ],
+    integrity = "sha256-e81dABkW86UO10NvT3AOPSsbrePtgDIZxZLWJQKlc2M=",
 )
-
-bazel_dep(name = "aspect_rules_py", version = "1.5.0")

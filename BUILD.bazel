@@ -23,7 +23,7 @@ genrule(
     outs = [ "make" ],
     cmd = " && ".join([
         "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
-    ]),
+    ]), 
 )
 
 pkg_files(
@@ -99,6 +99,18 @@ pkg_zip(
     out = "libtool.zip",
 )
 
+pkg_zip(
+    name = "pkgconfig_zip",
+    srcs = ["@rules_foreign_cc//toolchains/private:pkgconfig_tool"],
+    out = "pkgconfig.zip",
+)
+
+pkg_zip(
+    name = "autoconf_archive_zip",
+    srcs = ["@autoconf_archive//:autoconf_archive"],
+    out = "autoconf_archive.zip",
+)
+
 install_zips(
     name = "install_zips",
     zips = [
@@ -107,5 +119,7 @@ install_zips(
         ":autoconf_zip",
         ":automake_zip",
         ":libtool_zip",
+        ":pkgconfig_zip",
+        ":autoconf_archive_zip",
     ],
 )

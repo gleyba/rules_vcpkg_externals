@@ -23,7 +23,7 @@ configure_make(
     }),
     configure_in_place = True,
     lib_source = ":all_srcs",
-        out_static_libs = select({
+    out_static_libs = select({
         "@platforms//os:macos": [
             "libasprintf.a",
             "libgettextpo.a",
