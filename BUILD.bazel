@@ -17,6 +17,33 @@ pkg_zip(
     out = "m4.zip",
 )
 
+pkg_files(
+    name = "bison_files",
+    srcs = ["@bison//bin:bison"],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "bin/",
+)
+
+pkg_zip(
+    name = "bison_zip",
+    srcs = [":bison_files"],
+    out = "bison.zip",
+)
+
+
+pkg_files(
+    name = "flex_files",
+    srcs = ["@flex//bin:flex"],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "bin/",
+)
+
+pkg_zip(
+    name = "flex_zip",
+    srcs = [":flex_files"],
+    out = "flex.zip",
+)
+
 genrule(
     name = "copy_make_bin",
     srcs = [ "@rules_foreign_cc//toolchains/private:make_tool" ],
@@ -115,6 +142,8 @@ install_zips(
     name = "install_zips",
     zips = [
         ":m4_zip",
+        ":bison_zip",
+        ":flex_zip",
         ":make_zip",
         ":autoconf_zip",
         ":automake_zip",

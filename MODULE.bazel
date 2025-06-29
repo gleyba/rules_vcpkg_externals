@@ -58,6 +58,22 @@ m4.repository(
 )
 use_repo(m4, "m4")
 
+bazel_dep(name = "rules_bison", version = "0.4")
+
+bison = use_extension(
+    "@rules_bison//bison/internal:default_toolchain_ext.bzl",
+    "default_toolchain_ext",
+)
+use_repo(bison, "bison")
+
+bazel_dep(name = "rules_flex", version = "0.4")
+
+flex = use_extension(
+    "@rules_flex//flex/internal:default_toolchain_ext.bzl",
+    "default_toolchain_ext",
+)
+use_repo(flex, "flex")
+
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
