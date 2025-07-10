@@ -22,13 +22,13 @@ _SCRIPTS = [
 
 configure_make(
     name = "autoconf",
+    configure_in_place = True,
     env = select({
         "@platforms//os:macos": {
             "AR": "",
         },
         "//conditions:default": {},
     }),
-    configure_in_place = True,
     lib_source = ":all_srcs",
     out_binaries = _SCRIPTS,
     out_data_dirs = [

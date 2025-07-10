@@ -1,6 +1,5 @@
-load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "pkg_attributes")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
 load("@rules_pkg//pkg/private/zip:zip.bzl", "pkg_zip")
-
 load("//rules:install_zips.bzl", "install_zips")
 load("//rules:postprocess_auto_stuff.bzl", "postprocess_auto_stuff")
 
@@ -30,10 +29,15 @@ pkg_zip(
     out = "bison.zip",
 )
 
+filegroup(
+    name = "flex_bin",
+    srcs = ["@flex"],
+    output_group = "flex",
+)
 
 pkg_files(
     name = "flex_files",
-    srcs = ["@flex//bin:flex"],
+    srcs = [":flex_bin"],
     attributes = pkg_attributes(mode = "0755"),
     prefix = "bin/",
 )
@@ -46,11 +50,9 @@ pkg_zip(
 
 genrule(
     name = "copy_make_bin",
-    srcs = [ "@rules_foreign_cc//toolchains/private:make_tool" ],
-    outs = [ "make" ],
-    cmd = " && ".join([
-        "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
-    ]), 
+    srcs = ["@rules_foreign_cc//toolchains/private:make_tool"],
+    outs = ["make"],
+    cmd = "cp $(location @rules_foreign_cc//toolchains/private:make_tool)/bin/make $@",
 )
 
 pkg_files(
@@ -68,11 +70,11 @@ pkg_zip(
 
 postprocess_auto_stuff(
     name = "postprocess_autoconf",
-    srcs = "@autoconf//:autoconf",
-    output = "autoconf",
+    srcs = "@autoconf",
     bin_postfixes = {
         "autoconf.build_tmpdir/autoconf": "__BIN_DIR__/..",
     },
+    output = "autoconf",
     replace_in_bin = {
         "/usr/bin/": "/usr/bin/env ",
     },
@@ -87,14 +89,14 @@ pkg_zip(
 
 postprocess_auto_stuff(
     name = "postprocess_automake",
-    srcs = "@automake//:automake",
-    output = "automake",
+    srcs = "@automake",
     bin_postfixes = {
         "automake.build_tmpdir/automake": "__BIN_DIR__/..",
         "bin/autoconf/bin/autoconf": "__BIN_DIR__/autoconf",
     },
+    output = "automake",
     replace_in_bin = {
-        "/usr/bin/": "/usr/bin/env" ,
+        "/usr/bin/": "/usr/bin/env",
     },
 )
 
@@ -106,14 +108,14 @@ pkg_zip(
 
 postprocess_auto_stuff(
     name = "postprocess_libtool",
-    srcs = "@libtool//:libtool",
-    output = "libtool",
+    srcs = "@libtool",
     bin_postfixes = {
         "bin/scripts/ar_wrapper": "\"/usr/bin/env ar",
         "llvm_toolchain/bin/cc_wrapper.sh": "\"/usr/bin/env clang",
         "toolchain_llvm/lib/clang/16 ": "\"",
         "libtool.build_tmpdir/install": "__BIN_DIR__/..",
     },
+    output = "libtool",
     replace_in_bin = {
         "/usr/bin/": "/usr/bin/env ",
         # "with_gcc=yes": "with_gcc=no",
@@ -134,7 +136,7 @@ pkg_zip(
 
 pkg_zip(
     name = "autoconf_archive_zip",
-    srcs = ["@autoconf_archive//:autoconf_archive"],
+    srcs = ["@autoconf_archive"],
     out = "autoconf_archive.zip",
 )
 

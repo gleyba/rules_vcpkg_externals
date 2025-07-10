@@ -11,22 +11,19 @@ filegroup(
 )
 
 configure_make(
-    name = "automake",
+    name = "flex",
     build_data = [
-        "@//:postprocess_autoconf",
+        "@//scripts:ar_wrapper",
     ],
     configure_in_place = True,
-    env = {
-        "AUTOCONF": "$$EXT_BUILD_ROOT/$(location @//:postprocess_autoconf)/bin/autoconf",
-    },
+    env = select({
+        "@platforms//os:macos": {
+            "AR": "$$EXT_BUILD_ROOT/$(location @//scripts:ar_wrapper)",
+        },
+        "//conditions:default": {},
+    }),
     lib_source = ":all_srcs",
     out_binaries = [
-        "automake",
-        "automake-1.16",
-        "aclocal",
-        "aclocal-1.16",
-    ],
-    out_data_dirs = [
-        "share",
+        "flex",
     ],
 )

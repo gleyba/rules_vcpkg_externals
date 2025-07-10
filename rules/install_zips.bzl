@@ -9,7 +9,7 @@ def _install_zips_impl(ctx):
             "set -euo pipefail",
             "mkdir -p $1",
         ] + [
-            "install %s $1" % zip_file.basename 
+            "install %s $1" % zip_file.basename
             for zip_file in ctx.files.zips
         ]),
     )

@@ -8,13 +8,12 @@ module(
 bazel_dep(name = "platforms", version = "0.0.11")
 bazel_dep(name = "rules_pkg", version = "1.1.0")
 bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
-
 single_version_override(
     module_name = "rules_foreign_cc",
-    version = "0.14.0",
     patches = [
         "//patches:rules_foreign_cc.patch",
     ],
+    version = "0.14.0",
 )
 
 bazel_dep(name = "toolchains_llvm", version = "1.4.0")
@@ -32,20 +31,19 @@ llvm.toolchain(
     cxx_standard = {"": "c++17"},
     llvm_versions = LLVM_VERSIONS,
 )
-
 use_repo(llvm, "llvm_toolchain")
+
 register_toolchains("@llvm_toolchain//:all")
 
 bazel_dep(name = "rules_python", version = "1.4.1")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
-    python_version = "3.13",
     is_default = True,
+    python_version = "3.13",
 )
 
 bazel_dep(name = "aspect_rules_py", version = "1.5.0")
-
 bazel_dep(name = "rules_m4", version = "0.3")
 
 m4 = use_extension(
@@ -66,77 +64,84 @@ bison = use_extension(
 )
 use_repo(bison, "bison")
 
-bazel_dep(name = "rules_flex", version = "0.4")
-
-flex = use_extension(
-    "@rules_flex//flex/internal:default_toolchain_ext.bzl",
-    "default_toolchain_ext",
-)
-use_repo(flex, "flex")
-
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "libtool",
     build_file = "//third_party:BUILD.libtool.bazel",
+    patches = [
+        "//patches:libtool.patch",
+    ],
+    sha256 = "e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3",
     strip_prefix = "libtool-2.4.6",
     urls = [
         "https://mirror.bazel.build/ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz",
         "https://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz",
     ],
-    patches = [
-        "//patches:libtool.patch",
-    ],
-    sha256 = "e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3",
 )
 
 http_archive(
     name = "autoconf",
     build_file = "//third_party:BUILD.autoconf.bazel",
+    patches = [
+        "//patches:autoconf.patch",
+    ],
+    sha256 = "431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c",
     strip_prefix = "autoconf-2.71",
     urls = [
         "https://mirror.bazel.build/ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz",
         "https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz",
     ],
-    patches = [
-        "//patches:autoconf.patch",
-    ],
-    sha256 = "431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c",
 )
 
 http_archive(
     name = "automake",
     build_file = "//third_party:BUILD.automake.bazel",
+    patches = [
+        "//patches:automake.patch",
+    ],
+    sha256 = "8a0f0be7aaae2efa3a68482af28e5872d8830b9813a6a932a2571eac63ca1794",
     strip_prefix = "automake-1.16.4",
     urls = [
         "https://mirror.bazel.build/ftp.gnu.org/gnu/automake/automake-1.16.4.tar.gz",
         "https://ftp.gnu.org/gnu/automake/automake-1.16.4.tar.gz",
     ],
-    patches = [
-        "//patches:automake.patch",
-    ],
-    sha256 = "8a0f0be7aaae2efa3a68482af28e5872d8830b9813a6a932a2571eac63ca1794",
 )
 
 http_archive(
     name = "gettext",
     build_file = "//third_party:BUILD.gettext.bazel",
-    strip_prefix = "gettext-0.25",
-    urls = [
-        "https://ftp.gnu.org/pub/gnu/gettext/gettext-0.25.tar.gz",
-    ],
     patches = [
         "//patches:gettext.patch",
     ],
     sha256 = "aee02dab79d9138fdcc7226b67ec985121bce6007edebe30d0e39d42f69a340e",
+    strip_prefix = "gettext-0.25",
+    urls = [
+        "https://ftp.gnu.org/pub/gnu/gettext/gettext-0.25.tar.gz",
+    ],
 )
 
 http_archive(
     name = "autoconf_archive",
     build_file = "//third_party:BUILD.autoconf_archive.bazel",
+    integrity = "sha256-e81dABkW86UO10NvT3AOPSsbrePtgDIZxZLWJQKlc2M=",
     strip_prefix = "autoconf-archive-2024.10.16",
     urls = [
         "https://mirrors.ibiblio.org/gnu/autoconf-archive/autoconf-archive-2024.10.16.tar.xz",
     ],
-    integrity = "sha256-e81dABkW86UO10NvT3AOPSsbrePtgDIZxZLWJQKlc2M=",
+)
+
+http_archive(
+    name = "flex",
+    build_file = "//third_party:BUILD.flex.bazel",
+    integrity = "sha256-aLJ0IjPnR8Ri94FGKioeKZ3GIHQB2sjwu7MW9IVlwqo=",
+    strip_prefix = "flex-2.6.3",
+    urls = [
+        "https://github.com/westes/flex/releases/download/v2.6.3/flex-2.6.3.tar.gz",
+    ],
+)
+
+bazel_dep(
+    name = "buildifier_prebuilt",
+    version = "8.2.0.2",
 )

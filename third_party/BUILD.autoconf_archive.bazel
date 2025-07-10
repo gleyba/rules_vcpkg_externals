@@ -13,10 +13,9 @@ filegroup(
 configure_make(
     name = "autoconf_archive",
     configure_in_place = True,
-    out_headers_only = True,
     lib_source = ":all_srcs",
     out_data_dirs = [
         "share",
     ],
+    out_headers_only = True,
 )
-

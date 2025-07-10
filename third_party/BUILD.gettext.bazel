@@ -15,14 +15,17 @@ configure_make(
     build_data = [
         "@//scripts:ar_wrapper",
     ],
+    configure_in_place = True,
     env = select({
         "@platforms//os:macos": {
             "AR": "$$EXT_BUILD_ROOT/$(location @//scripts:ar_wrapper)",
         },
         "//conditions:default": {},
     }),
-    configure_in_place = True,
     lib_source = ":all_srcs",
+    out_data_dirs = [
+        "share",
+    ],
     out_static_libs = select({
         "@platforms//os:macos": [
             "libasprintf.a",
@@ -32,7 +35,4 @@ configure_make(
         ],
         "//conditions:default": [],
     }),
-    out_data_dirs = [
-        "share",
-    ],
 )

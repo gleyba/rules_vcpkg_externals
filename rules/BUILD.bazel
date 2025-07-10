@@ -2,6 +2,6 @@ load("@aspect_rules_py//py:defs.bzl", "py_binary")
 
 py_binary(
     name = "postprocess_auto_stuff_bin",
-    main = "postprocess_auto_stuff.py",
     srcs = ["postprocess_auto_stuff.py"],
+    main = "postprocess_auto_stuff.py",
 )
