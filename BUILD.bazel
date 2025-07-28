@@ -140,6 +140,26 @@ pkg_zip(
     out = "autoconf_archive.zip",
 )
 
+genrule(
+    name = "copy_gsed_bin",
+    srcs = ["@sed"],
+    outs = ["gsed"],
+    cmd = "cp $(location @sed//:sed) $@",
+)
+
+pkg_files(
+    name = "sed_files",
+    srcs = ["@sed"],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "bin/",
+)
+
+pkg_zip(
+    name = "sed_zip",
+    srcs = [":sed_files"],
+    out = "sed.zip",
+)
+
 install_zips(
     name = "install_zips",
     zips = [
@@ -147,6 +167,7 @@ install_zips(
         ":bison_zip",
         ":flex_zip",
         ":make_zip",
+        ":sed_zip",
         ":autoconf_zip",
         ":automake_zip",
         ":libtool_zip",

@@ -6,6 +6,7 @@ module(
 )
 
 bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "bazel_skylib", version = "1.8.1")
 bazel_dep(name = "rules_pkg", version = "1.1.0")
 bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
 single_version_override(
@@ -16,24 +17,11 @@ single_version_override(
     version = "0.14.0",
 )
 
-bazel_dep(name = "toolchains_llvm", version = "1.4.0")
-
-llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
-
-LLVM_VERSIONS = {
-    "": "16.0.0",
-    "darwin-aarch64": "16.0.5",
-    "darwin-x86_64": "15.0.7",
-}
-
-llvm.toolchain(
-    name = "llvm_toolchain",
-    cxx_standard = {"": "c++17"},
-    llvm_versions = LLVM_VERSIONS,
+bazel_dep(
+    name = "buildifier_prebuilt",
+    version = "8.2.0.2",
+    dev_dependency = True,
 )
-use_repo(llvm, "llvm_toolchain")
-
-register_toolchains("@llvm_toolchain//:all")
 
 bazel_dep(name = "rules_python", version = "1.4.1")
 
@@ -44,6 +32,7 @@ python.toolchain(
 )
 
 bazel_dep(name = "aspect_rules_py", version = "1.5.0")
+bazel_dep(name = "sed", version = "4.9.bcr.2")
 bazel_dep(name = "rules_m4", version = "0.3")
 
 m4 = use_extension(
@@ -65,6 +54,36 @@ bison = use_extension(
 use_repo(bison, "bison")
 
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "macos_sdk",
+    build_file = "//third_party:BUILD.MacOSX.sdk.bazel",
+    sha256 = "c15cf0f3f17d714d1aa5a642da8e118db53d79429eb015771ba816aa7c6c1cbd",
+    strip_prefix = "MacOSX15.5.sdk",
+    url = "https://github.com/joseluisq/macosx-sdks/releases/download/15.5/MacOSX15.5.sdk.tar.xz",
+)
+
+_SYSROOT_BUILD_CONTENT = """\
+filegroup(
+    name = "sysroot",
+    srcs = glob(["*/**"]),
+    visibility = ["//visibility:public"],
+)
+"""
+
+http_archive(
+    name = "jessie_amd64_sysroot",
+    build_file_content = _SYSROOT_BUILD_CONTENT,
+    integrity = "sha256-y4dycF2V4p4wGkZLhdg4+9uUKPi7qnG/Zbl/VQTyj+8=",
+    url = "https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/1126d9b629c97385a503debac7a1b59e60a3ab1b/debian_jessie_amd64_sysroot.tar.xz",
+)
+
+http_archive(
+    name = "jessie_arm64_sysroot",
+    build_file_content = _SYSROOT_BUILD_CONTENT,
+    integrity = "sha256-/Ns07BjUSk6Y22jv19gfB6zh/O8X7ZSHT8Argo1DXzc=",
+    url = "https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/1126d9b629c97385a503debac7a1b59e60a3ab1b/debian_jessie_arm64_sysroot.tar.xz",
+)
 
 http_archive(
     name = "libtool",
@@ -141,7 +160,61 @@ http_archive(
     ],
 )
 
-bazel_dep(
-    name = "buildifier_prebuilt",
-    version = "8.2.0.2",
+# http_archive(
+#     name = "gsed",
+#     build_file = "//third_party:BUILD.gsed.bazel",
+#     strip_prefix = "sed-4.9",
+#     integrity = "sha256-biJrcy4c1zlGStaGK9Ghq6QteYKSLaelNRljHSSXUYE=",
+#     urls = [
+#         "https://ftp.gnu.org/gnu/sed/sed-4.9.tar.xz",
+#     ],
+# )
+
+new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
+
+new_local_repository(
+    name = "gsed",
+    build_file = "//third_party:BUILD.gsed.bazel",
+    path = "/Users/gleyba/Develop/tmp/vcpkg_experiment/tmp/sed-4.9",
 )
+
+bazel_dep(name = "toolchains_llvm", version = "1.4.0")
+
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+
+LLVM_VERSIONS = {
+    "": "16.0.0",
+    "darwin-aarch64": "16.0.5",
+    "darwin-x86_64": "15.0.7",
+}
+
+llvm.toolchain(
+    name = "llvm_toolchain",
+    cxx_standard = {"": "c++17"},
+    llvm_versions = LLVM_VERSIONS,
+)
+llvm.sysroot(
+    name = "llvm_toolchain",
+    label = "@macos_sdk//:sysroot",
+    targets = [
+        "darwin-aarch64",
+        "darwin-x86_64",
+    ],
+)
+llvm.sysroot(
+    name = "llvm_toolchain",
+    label = "@jessie_arm64_sysroot//:sysroot",
+    targets = [
+        "linux-aarch64",
+    ],
+)
+llvm.sysroot(
+    name = "llvm_toolchain",
+    label = "@jessie_amd64_sysroot//:sysroot",
+    targets = [
+        "linux-x86_64",
+    ],
+)
+use_repo(llvm, "llvm_toolchain")
+
+register_toolchains("@llvm_toolchain//:all")
