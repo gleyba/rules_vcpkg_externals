@@ -148,16 +148,16 @@ genrule(
 )
 
 pkg_files(
-    name = "sed_files",
-    srcs = ["@sed"],
+    name = "gsed_files",
+    srcs = [":copy_gsed_bin"],
     attributes = pkg_attributes(mode = "0755"),
     prefix = "bin/",
 )
 
 pkg_zip(
-    name = "sed_zip",
-    srcs = [":sed_files"],
-    out = "sed.zip",
+    name = "gsed_zip",
+    srcs = [":gsed_files"],
+    out = "gsed.zip",
 )
 
 install_zips(
@@ -167,7 +167,7 @@ install_zips(
         ":bison_zip",
         ":flex_zip",
         ":make_zip",
-        ":sed_zip",
+        ":gsed_zip",
         ":autoconf_zip",
         ":automake_zip",
         ":libtool_zip",
