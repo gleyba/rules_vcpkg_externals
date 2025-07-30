@@ -15,4 +15,5 @@ try-import %workspace%/.user.bazelrc
 build --copt="-Wno-incompatible-function-pointer-types" 
 build --copt="-Wno-implicit-const-int-float-conversion"
 build --copt="-Wno-implicit-function-declaration"
+build --host_copt="-Wno-implicit-function-declaration"
 build --copt="-Wno-int-conversion"
