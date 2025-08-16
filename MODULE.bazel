@@ -8,6 +8,7 @@ module(
 bazel_dep(name = "platforms", version = "0.0.11")
 bazel_dep(name = "bazel_skylib", version = "1.8.1")
 bazel_dep(name = "rules_pkg", version = "1.1.0")
+bazel_dep(name = "rules_cc", version = "0.2.0")
 bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
 single_version_override(
     module_name = "rules_foreign_cc",
@@ -33,6 +34,14 @@ python.toolchain(
 
 bazel_dep(name = "aspect_rules_py", version = "1.5.0")
 bazel_dep(name = "sed", version = "4.9.bcr.2")
+single_version_override(
+    module_name = "sed",
+    patches = [
+        "//patches:sed.patch",
+    ],
+    version = "4.9.bcr.2",
+)
+
 bazel_dep(name = "rules_m4", version = "0.3")
 
 m4 = use_extension(
@@ -46,6 +55,13 @@ m4.repository(
 use_repo(m4, "m4")
 
 bazel_dep(name = "rules_bison", version = "0.4")
+single_version_override(
+    module_name = "rules_bison",
+    patches = [
+        "//patches:rules_bison.patch",
+    ],
+    version = "0.4",
+)
 
 bison = use_extension(
     "@rules_bison//bison/internal:default_toolchain_ext.bzl",
@@ -79,10 +95,11 @@ http_archive(
 )
 
 http_archive(
-    name = "jessie_arm64_sysroot",
+    name = "arm64_buildroot_linux_musl",
     build_file_content = _SYSROOT_BUILD_CONTENT,
-    integrity = "sha256-/Ns07BjUSk6Y22jv19gfB6zh/O8X7ZSHT8Argo1DXzc=",
-    url = "https://commondatastorage.googleapis.com/chrome-linux-sysroot/toolchain/1126d9b629c97385a503debac7a1b59e60a3ab1b/debian_jessie_arm64_sysroot.tar.xz",
+    integrity = "sha256-3vuoMf+hF1I28TcGkzPiHtRtTRn+tQgKkM8ki2/Cywg=",
+    strip_prefix = "aarch64--musl--stable-2025.08-1/aarch64-buildroot-linux-musl/sysroot",
+    url = "https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64/tarballs/aarch64--musl--stable-2025.08-1.tar.xz",
 )
 
 http_archive(
@@ -160,38 +177,21 @@ http_archive(
     ],
 )
 
-# http_archive(
-#     name = "gsed",
-#     build_file = "//third_party:BUILD.gsed.bazel",
-#     strip_prefix = "sed-4.9",
-#     integrity = "sha256-biJrcy4c1zlGStaGK9Ghq6QteYKSLaelNRljHSSXUYE=",
-#     urls = [
-#         "https://ftp.gnu.org/gnu/sed/sed-4.9.tar.xz",
-#     ],
-# )
-
-new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
-
-new_local_repository(
-    name = "gsed",
-    build_file = "//third_party:BUILD.gsed.bazel",
-    path = "/Users/gleyba/Develop/tmp/vcpkg_experiment/tmp/sed-4.9",
-)
-
 bazel_dep(name = "toolchains_llvm", version = "1.4.0")
 
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 
-LLVM_VERSIONS = {
-    "": "16.0.0",
-    "darwin-aarch64": "16.0.5",
-    "darwin-x86_64": "15.0.7",
-}
+# LLVM_VERSIONS = {
+#     "": "16.0.0",
+#     "darwin-aarch64": "16.0.5",
+#     "darwin-x86_64": "15.0.7",
+# }
 
 llvm.toolchain(
     name = "llvm_toolchain",
     cxx_standard = {"": "c++17"},
-    llvm_versions = LLVM_VERSIONS,
+    # llvm_versions = LLVM_VERSIONS,
+    llvm_version = "19.1.6",
 )
 llvm.sysroot(
     name = "llvm_toolchain",
@@ -203,7 +203,7 @@ llvm.sysroot(
 )
 llvm.sysroot(
     name = "llvm_toolchain",
-    label = "@jessie_arm64_sysroot//:sysroot",
+    label = "@arm64_buildroot_linux_musl//:sysroot",
     targets = [
         "linux-aarch64",
     ],

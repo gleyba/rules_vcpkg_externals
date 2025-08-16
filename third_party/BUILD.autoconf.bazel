@@ -23,7 +23,9 @@ _SCRIPTS = [
 configure_make(
     name = "autoconf",
     configure_in_place = True,
-    env = select({
+    env = {
+        "M4": "$$EXT_BUILD_ROOT/$(M4)",
+    } | select({
         "@platforms//os:macos": {
             "AR": "",
         },
@@ -34,4 +36,5 @@ configure_make(
     out_data_dirs = [
         "share",
     ],
+    toolchains = ["@rules_m4//m4:current_m4_toolchain"],
 )

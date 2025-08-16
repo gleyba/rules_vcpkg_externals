@@ -1,6 +1,7 @@
 common --nosandbox_default_allow_network
 common --incompatible_allow_tags_propagation
 common --repo_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+common --enable_platform_specific_config
 
 build --incompatible_strict_action_env
 build --experimental_reuse_sandbox_directories
@@ -12,8 +13,18 @@ test --build_tests_only
 
 try-import %workspace%/.user.bazelrc
 
+build --cxxopt="-std=c++17"
+build --host_cxxopt="-std=c++17"
+
 build --copt="-Wno-incompatible-function-pointer-types" 
 build --copt="-Wno-implicit-const-int-float-conversion"
 build --copt="-Wno-implicit-function-declaration"
 build --host_copt="-Wno-implicit-function-declaration"
 build --copt="-Wno-int-conversion"
+build --host_copt="-Wno-int-conversion"
+
+build:linux --linkopt -static
+build:linux --host_linkopt -static
+build:linux --cxxopt -D_LIBCPP_HAS_MUSL_LIBC=1
+build:linux --host_cxxopt -D_LIBCPP_HAS_MUSL_LIBC=1
+build:linux --host_linkopt -static

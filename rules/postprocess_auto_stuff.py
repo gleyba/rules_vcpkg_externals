@@ -9,10 +9,10 @@ def postprocess_search_prefixes(line, search_prefixes, is_sh, is_perl):
         if build_dir_pos == -1:
             continue
 
-        root_start_pos = line.find("'/private")
+        root_start_pos = line.find("'/")
         start_sign = "'"
         if root_start_pos == -1:
-            root_start_pos = line.find("\"/private")
+            root_start_pos = line.find("\"/")
             start_sign = "\""
 
         if root_start_pos == -1:
@@ -100,7 +100,13 @@ def postprocess_auto_stuff(
                     if line.startswith("#! /bin/sh\n") or line.startswith("#!/bin/sh\n"):
                         is_sh = True
                         line = "#!/usr/bin/env sh\n"
-                    elif line.startswith("#! /usr/bin/perl") or line.startswith("#!/usr/bin/perl"):
+                    elif line.startswith("#! /bin/bash\n") or line.startswith("#!/bin/bash\n"):
+                        is_sh = True
+                        line = "#!/usr/bin/env bash\n"
+                    elif line.startswith("#! /usr/bin/perl") \
+                        or line.startswith("#!/usr/bin/perl") \
+                        or line.startswith("#! /bin/perl") \
+                        or line.startswith("#!/bin/perl"):
                         is_perl = True
                         line = "#!/usr/bin/env perl\n"
                     else:

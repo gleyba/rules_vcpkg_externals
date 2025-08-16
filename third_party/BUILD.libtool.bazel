@@ -16,7 +16,9 @@ configure_make(
         "@//scripts:ar_wrapper",
     ],
     configure_in_place = True,
-    env = select({
+    env = {
+        "M4": "$$EXT_BUILD_ROOT/$(M4)",
+    } | select({
         "@platforms//os:macos": {
             "AR": "$$EXT_BUILD_ROOT/$(location @//scripts:ar_wrapper)",
         },
@@ -32,4 +34,5 @@ configure_make(
         "share",
         "lib",
     ],
+    toolchains = ["@rules_m4//m4:current_m4_toolchain"],
 )

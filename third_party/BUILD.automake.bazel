@@ -18,6 +18,7 @@ configure_make(
     configure_in_place = True,
     env = {
         "AUTOCONF": "$$EXT_BUILD_ROOT/$(location @//:postprocess_autoconf)/bin/autoconf",
+        "M4": "$$EXT_BUILD_ROOT/$(M4)",
     },
     lib_source = ":all_srcs",
     out_binaries = [
@@ -29,4 +30,5 @@ configure_make(
     out_data_dirs = [
         "share",
     ],
+    toolchains = ["@rules_m4//m4:current_m4_toolchain"],
 )

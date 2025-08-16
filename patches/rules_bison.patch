@@ -1,0 +1,186 @@
+diff --git bison/internal/bison_src.patch bison/internal/bison_src.patch
+new file mode 100644
+index 0000000..6026381
+--- /dev/null
++++ bison/internal/bison_src.patch
+@@ -0,0 +1,157 @@
++diff --git BUILD.bazel BUILD.bazel
++index 4ba4536..9d45929 100755
++--- BUILD.bazel
+++++ BUILD.bazel
++@@ -62,6 +62,17 @@ cc_library(
++     deps = ["@bazel_tools//tools/cpp/runfiles"],
++ )
++ 
+++cc_library(
+++    name = "musl_compability",
+++    hdrs = ["src/musl_compability.h"],
+++    srcs = [
+++        "src/musl_compability.cc",
+++        "src/musl_compability.h",
+++    ],
+++    alwayslink = True,
+++    visibility = ["//visibility:public"],
+++)
+++
++ cc_library(
++     name = "bison_lib",
++     srcs = BISON_SRC_SRCS + BISON_LIB_SRCS,
++diff --git bin/BUILD.bazel bin/BUILD.bazel
++index 1b5cbe6..b2b5761 100755
++--- bin/BUILD.bazel
+++++ bin/BUILD.bazel
++@@ -21,6 +21,9 @@ cc_binary(
++     name = "bison",
++     data = [":bison_runfiles"],
++     visibility = ["//visibility:public"],
++-    deps = ["//:bison_lib"],
+++    deps = [
+++        "//:bison_lib",
+++        "//:musl_compability",    
+++    ],
++     linkopts = BISON_LINKOPTS + [],
++ )
++diff --git gnulib/lib/fpending.c gnulib/lib/fpending.c
++index 3c01285..bed9f06 100644
++--- gnulib/lib/fpending.c
+++++ gnulib/lib/fpending.c
++@@ -17,6 +17,8 @@
++ 
++ /* Written by Jim Meyering. */
++ 
+++#ifndef __linux__
+++
++ #include <config.h>
++ 
++ /* Specification.  */
++@@ -60,3 +62,5 @@ __fpending (FILE *fp)
++   return 1;
++ #endif
++ }
+++
+++#endif
++diff --git lib/fpending.c lib/fpending.c
++index 3c01285..bed9f06 100644
++--- lib/fpending.c
+++++ lib/fpending.c
++@@ -17,6 +17,8 @@
++ 
++ /* Written by Jim Meyering. */
++ 
+++#ifndef __linux__
+++
++ #include <config.h>
++ 
++ /* Specification.  */
++@@ -60,3 +62,5 @@ __fpending (FILE *fp)
++   return 1;
++ #endif
++ }
+++
+++#endif
++diff --git src/musl_compability.cc src/musl_compability.cc
++new file mode 100644
++index 0000000..0126d7d
++--- /dev/null
+++++ src/musl_compability.cc
++@@ -0,0 +1,49 @@
+++// -*- C++ -*-
+++//===------------------- support/musl/xlocale.h ------------------------===//
+++//
+++//                     The LLVM Compiler Infrastructure
+++//
+++// This file is dual licensed under the MIT and the University of Illinois Open
+++// Source Licenses. See LICENSE.TXT for details.
+++//
+++//===----------------------------------------------------------------------===//
+++// This adds support for the extended locale functions that are currently
+++// missing from the Musl C library.
+++//
+++// This only works when the specified locale is "C" or "POSIX", but that's
+++// about as good as we can do without implementing full xlocale support
+++// in Musl.
+++//===----------------------------------------------------------------------===//
+++
+++#include <cstdlib>
+++#include <cwchar>
+++
+++#include "musl_compability.h"
+++
+++#ifdef __cplusplus
+++extern "C" {
+++#endif
+++long long strtoll_l(const char *nptr, char **endptr, int base,
+++                                  locale_t) {
+++  return strtoll(nptr, endptr, base);
+++}
+++unsigned long long strtoull_l(const char *nptr, char **endptr,
+++                                            int base, locale_t) {
+++  return strtoull(nptr, endptr, base);
+++}
+++long long wcstoll_l(const wchar_t *nptr, wchar_t **endptr,
+++                                  int base, locale_t) {
+++  return wcstoll(nptr, endptr, base);
+++}
+++unsigned long long wcstoull_l(const wchar_t *nptr,
+++                                            wchar_t **endptr, int base,
+++                                            locale_t) {
+++  return wcstoull(nptr, endptr, base);
+++}
+++long double wcstold_l(const wchar_t *nptr, wchar_t **endptr,
+++                                    locale_t) {
+++  return wcstold(nptr, endptr);
+++}
+++#ifdef __cplusplus
+++}
+++#endif
++diff --git src/musl_compability.h src/musl_compability.h
++new file mode 100644
++index 0000000..fda997f
++--- /dev/null
+++++ src/musl_compability.h
++@@ -0,0 +1,20 @@
+++#include <cstdlib>
+++#include <cwchar>
+++
+++#ifdef __cplusplus
+++extern "C" {
+++#endif
+++
+++long long strtoll_l(const char *nptr, char **endptr, int base, locale_t);
+++
+++unsigned long long strtoull_l(const char *nptr, char **endptr, int base, locale_t);
+++
+++long long wcstoll_l(const wchar_t *nptr, wchar_t **endptr, int base, locale_t);
+++
+++unsigned long long wcstoull_l(const wchar_t *nptr, wchar_t **endptr, int base, locale_t); 
+++
+++long double wcstold_l(const wchar_t *nptr, wchar_t **endptr, locale_t);
+++
+++#ifdef __cplusplus
+++}
+++#endif
++\ No newline at end of file
+diff --git bison/rules/bison_repository.bzl bison/rules/bison_repository.bzl
+index 0b24252..806c48a 100644
+--- bison/rules/bison_repository.bzl
++++ bison/rules/bison_repository.bzl
+@@ -175,6 +175,7 @@ def _bison_repository(ctx):
+     # Shim in support for locating $BISON_PKGDATADIR and $M4 via
+     # Bazel runfiles if available.
+     ctx.patch(ctx.attr._bazel_runfiles_patch)
++    ctx.patch(ctx.attr._bison_src_patch)
+     ctx.template("src/main.c", "src/main.c", substitutions = {
+         "main (int argc, char *argv[])\n{": "\n".join([
+             "main (int argc, char *argv[])\n{",
+@@ -234,6 +235,10 @@ bison_repository(
+             default = Label("//bison/internal:bazel_runfiles.patch"),
+             allow_single_file = True,
+         ),
++        "_bison_src_patch": attr.label(
++            default = Label("//bison/internal:bison_src.patch"),
++            allow_single_file = True,
++        ),
+         "_gnulib_build": attr.label(
+             default = Label("//bison/internal:gnulib/gnulib.BUILD"),
+             allow_single_file = True,

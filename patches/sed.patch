@@ -1,0 +1,32 @@
+diff --git config_linux.bzl config_linux.bzl
+index 38c557c..736997f 100644
+--- config_linux.bzl
++++ config_linux.bzl
+@@ -352,7 +352,7 @@ CONFIGURATION = {
+     "@HAVE_GETRANDOM@": "1",
+     "@HAVE_ISWBLANK@": "1",
+     "@HAVE_ISWCNTRL@": "1",
+-    "@HAVE_LANGINFO_ALTMON@": "1",
++    "@HAVE_LANGINFO_ALTMON@": "0",
+     "@HAVE_LANGINFO_CODESET@": "1",
+     "@HAVE_LANGINFO_ERA@": "1",
+     "@HAVE_LANGINFO_H@": "1",
+diff --git lib/fpending.c lib/fpending.c
+index 6408cff..75ba7c7 100644
+--- lib/fpending.c
++++ lib/fpending.c
+@@ -17,6 +17,8 @@
+ 
+ /* Written by Jim Meyering. */
+ 
++#ifndef __linux__
++
+ #include <config.h>
+ 
+ /* Specification.  */
+@@ -61,3 +63,5 @@ __fpending (FILE *fp)
+   return 1;
+ #endif
+ }
++
++#endif

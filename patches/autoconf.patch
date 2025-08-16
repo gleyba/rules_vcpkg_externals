@@ -1,5 +1,5 @@
 diff --git bin/autom4te.in bin/autom4te.in
-index 7ebe419..fbd5a6a 100644
+index 7ebe419..e60c460 100644
 --- bin/autom4te.in
 +++ bin/autom4te.in
 @@ -26,6 +26,9 @@ use 5.006;
