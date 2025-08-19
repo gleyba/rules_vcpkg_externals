@@ -18,4 +18,7 @@ configure_make(
         "share",
     ],
     out_headers_only = True,
+    postfix_script = """\
+rm -rf $$INSTALLDIR$$/share/info/dir
+""",
 )
