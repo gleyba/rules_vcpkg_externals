@@ -282,7 +282,7 @@
     },
     "@@rules_bison+//bison/internal:default_toolchain_ext.bzl%default_toolchain_ext": {
       "general": {
-        "bzlTransitiveDigest": "V73lEYMrydJ9FHe2jF5R2sn/Xij2d1YSEN4xl+glUfw=",
+        "bzlTransitiveDigest": "5Rcg9t59uCLuVnGyGVEAN02JFZZELWNgRnuAcOyuolg=",
         "usagesDigest": "s4qB4bGj9bKEsDGq6CIEgjE3jWerk42/JpyazYqMd5o=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

@@ -1,8 +1,8 @@
-diff --git bison/internal/bison_src.patch bison/internal/bison_src.patch
+diff --git bison/internal/bison_linux.patch bison/internal/bison_linux.patch
 new file mode 100644
 index 0000000..6026381
 --- /dev/null
-+++ bison/internal/bison_src.patch
++++ bison/internal/bison_linux.patch
 @@ -0,0 +1,157 @@
 +diff --git BUILD.bazel BUILD.bazel
 +index 4ba4536..9d45929 100755
@@ -162,23 +162,26 @@ index 0000000..6026381
 ++#endif
 +\ No newline at end of file
 diff --git bison/rules/bison_repository.bzl bison/rules/bison_repository.bzl
-index 0b24252..806c48a 100644
+index 0b24252..e1000b6 100644
 --- bison/rules/bison_repository.bzl
 +++ bison/rules/bison_repository.bzl
-@@ -175,6 +175,7 @@ def _bison_repository(ctx):
+@@ -175,6 +175,10 @@ def _bison_repository(ctx):
      # Shim in support for locating $BISON_PKGDATADIR and $M4 via
      # Bazel runfiles if available.
      ctx.patch(ctx.attr._bazel_runfiles_patch)
-+    ctx.patch(ctx.attr._bison_src_patch)
++
++    if ctx.os.name.startswith("linux"):
++        ctx.patch(ctx.attr._bison_linux_patch)
++
      ctx.template("src/main.c", "src/main.c", substitutions = {
          "main (int argc, char *argv[])\n{": "\n".join([
              "main (int argc, char *argv[])\n{",
-@@ -234,6 +235,10 @@ bison_repository(
+@@ -234,6 +238,10 @@ bison_repository(
              default = Label("//bison/internal:bazel_runfiles.patch"),
              allow_single_file = True,
          ),
-+        "_bison_src_patch": attr.label(
-+            default = Label("//bison/internal:bison_src.patch"),
++        "_bison_linux_patch": attr.label(
++            default = Label("//bison/internal:bison_linux.patch"),
 +            allow_single_file = True,
 +        ),
          "_gnulib_build": attr.label(
