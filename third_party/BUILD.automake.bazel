@@ -31,7 +31,7 @@ configure_make(
         "share",
     ],
     postfix_script = """\
-rm -rf $$INSTALLDIR$$/share/info/dir
+rm -rf $$INSTALLDIR/share/info/dir
 """,
     toolchains = ["@rules_m4//m4:current_m4_toolchain"],
 )

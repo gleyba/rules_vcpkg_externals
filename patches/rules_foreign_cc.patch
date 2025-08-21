@@ -1,17 +1,17 @@
 diff --git foreign_cc/built_tools/make_build.bzl foreign_cc/built_tools/make_build.bzl
-index b784dce..2e70ebf 100644
+index aec96c3..7d1806a 100644
 --- foreign_cc/built_tools/make_build.bzl
 +++ foreign_cc/built_tools/make_build.bzl
-@@ -95,7 +95,7 @@ def _make_tool_impl(ctx):
+@@ -101,7 +101,7 @@ def _make_tool_impl(ctx):
              ]
  
          env.update({
 -            "AR": absolute_ar,
-+            "AR": "", # absolute_ar,
++            "AR": "",
              "ARFLAGS": _join_flags_list(ctx.workspace_name, arflags),
              "CC": absolute_cc,
              "CFLAGS": _join_flags_list(ctx.workspace_name, non_sysroot_cflags),
-@@ -106,7 +106,7 @@ def _make_tool_impl(ctx):
+@@ -112,7 +112,7 @@ def _make_tool_impl(ctx):
          configure_env = " ".join(["%s=\"%s\"" % (key, value) for key, value in env.items()])
          script = [
              "%s ./configure %s" % (configure_env, " ".join(configure_options)),
@@ -20,14 +20,37 @@ index b784dce..2e70ebf 100644
              "./build.sh",
          ] + install_cmd
  
+diff --git foreign_cc/built_tools/pkgconfig_build.bzl foreign_cc/built_tools/pkgconfig_build.bzl
+index ca16cc2..22d7134 100644
+--- foreign_cc/built_tools/pkgconfig_build.bzl
++++ foreign_cc/built_tools/pkgconfig_build.bzl
+@@ -69,6 +69,7 @@ def _pkgconfig_tool_impl(ctx):
+     make_data = get_make_data(ctx)
+ 
+     configure_options = [
++        "--enable-static",
+         "--with-internal-glib",
+         "--prefix=\"$$INSTALLDIR$$\"",
+     ]
+@@ -90,8 +91,8 @@ def _pkgconfig_tool_impl(ctx):
+     configure_env = " ".join(["%s=\"%s\"" % (key, value) for key, value in env.items()])
+     script = [
+         "%s ./configure %s" % (configure_env, " ".join(configure_options)),
+-        "\"%s\"" % make_data.path,
+-        "\"%s\" install" % make_data.path,
++        "\"%s\" AM_LDFLAGS=-all-static " % make_data.path,
++        "\"%s\" AM_LDFLAGS=-all-static install" % make_data.path,
+     ]
+ 
+     if make_data.target:
 diff --git foreign_cc/repositories.bzl foreign_cc/repositories.bzl
-index a990805..16b670c 100644
+index cc6266b..b5b16b7 100644
 --- foreign_cc/repositories.bzl
 +++ foreign_cc/repositories.bzl
 @@ -10,7 +10,7 @@ def rules_foreign_cc_dependencies(
          native_tools_toolchains = [],
          register_default_tools = True,
-         cmake_version = "3.23.2",
+         cmake_version = "3.31.7",
 -        make_version = "4.4.1",
 +        make_version = "4.2.1",
          ninja_version = "1.12.1",

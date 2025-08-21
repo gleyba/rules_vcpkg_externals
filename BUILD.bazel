@@ -118,7 +118,6 @@ postprocess_auto_stuff(
     output = "libtool",
     replace_in_bin = {
         "/usr/bin/": "/usr/bin/env ",
-        # "with_gcc=yes": "with_gcc=no",
     },
 )
 
