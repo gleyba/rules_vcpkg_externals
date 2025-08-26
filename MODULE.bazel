@@ -187,14 +187,14 @@ llvm.toolchain(
     # llvm_versions = LLVM_VERSIONS,
     llvm_version = "19.1.6",
 )
-llvm.sysroot(
-    name = "llvm_toolchain",
-    label = "@macos_sdk//:sysroot",
-    targets = [
-        "darwin-aarch64",
-        "darwin-x86_64",
-    ],
-)
+# llvm.sysroot(
+#     name = "llvm_toolchain",
+#     label = "@macos_sdk//:sysroot",
+#     targets = [
+#         "darwin-aarch64",
+#         "darwin-x86_64",
+#     ],
+# )
 llvm.sysroot(
     name = "llvm_toolchain",
     label = "@arm64_buildroot_linux_musl//:sysroot",

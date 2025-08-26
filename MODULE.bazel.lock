@@ -820,7 +820,7 @@
     "@@toolchains_llvm+//toolchain/extensions:llvm.bzl%llvm": {
       "general": {
         "bzlTransitiveDigest": "n8WR0DxEQ5FgfuREm47KayUAJKtFHcMNZLKerT+ixFY=",
-        "usagesDigest": "yJR6YgWDZTzKdj2ge1+cWzZXs9TcO79OC/QseRzAReQ=",
+        "usagesDigest": "Z/A7cif5K0Td1Yeywk+SJABY/0o89BgWDDOKdoDUr1A=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -874,8 +874,6 @@
               "unfiltered_compile_flags": {},
               "toolchain_roots": {},
               "sysroot": {
-                "darwin-aarch64": "'@@+_repo_rules+macos_sdk//:sysroot'",
-                "darwin-x86_64": "'@@+_repo_rules+macos_sdk//:sysroot'",
                 "linux-aarch64": "'@@+_repo_rules+arm64_buildroot_linux_musl//:sysroot'",
                 "linux-x86_64": "'@@+_repo_rules+amd64_buildroot_linux_musl//:sysroot'"
               }
@@ -892,11 +890,6 @@
             "",
             "arm64_buildroot_linux_musl",
             "+_repo_rules+arm64_buildroot_linux_musl"
-          ],
-          [
-            "",
-            "macos_sdk",
-            "+_repo_rules+macos_sdk"
           ],
           [
             "toolchains_llvm+",

@@ -15,6 +15,9 @@ configure_make(
     build_data = [
         "@//scripts:ar_wrapper",
     ],
+    configure_options = [
+        "--disable-ltdl-install",
+    ],
     configure_in_place = True,
     env = {
         "M4": "$$EXT_BUILD_ROOT/$(M4)",
