@@ -16,15 +16,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: bazelbuild/setup-bazelisk@v3
-    - uses: ConorMacBride/install-package@v1
-      with:
-        apt: lld
     - name: Build Binaries
       run: bazel run //:install_zips -c opt -- $(pwd)/zips
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: rules_vcpkg_external_toolchains
+        name: rules_vcpkg_externals
         path: zips/*.zip
   release:
     needs: build
@@ -35,8 +32,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: rules_vcpkg_external_toolchains/*.zip
+          files: rules_vcpkg_externals/*.zip
           tag_name: ${{ inputs.version }}
-          body: "Release of rules_vcpkg_external_toolchains ${{ inputs.version }}."
+          body: "Release of rules_vcpkg_externals ${{ inputs.version }}."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

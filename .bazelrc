@@ -28,3 +28,5 @@ build:linux --host_linkopt -static
 build:linux --cxxopt -D_LIBCPP_HAS_MUSL_LIBC=1
 build:linux --host_cxxopt -D_LIBCPP_HAS_MUSL_LIBC=1
 build:linux --host_linkopt -static
+
+common --downloader_config=bazel_downloader.cfg
