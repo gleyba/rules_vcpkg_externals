@@ -820,7 +820,7 @@
     "@@toolchains_llvm+//toolchain/extensions:llvm.bzl%llvm": {
       "general": {
         "bzlTransitiveDigest": "n8WR0DxEQ5FgfuREm47KayUAJKtFHcMNZLKerT+ixFY=",
-        "usagesDigest": "oFBfhvi/wuEGXAh/dmD08Ss+yo66YvJDeulDOvdej50=",
+        "usagesDigest": "yJR6YgWDZTzKdj2ge1+cWzZXs9TcO79OC/QseRzAReQ=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -877,7 +877,7 @@
                 "darwin-aarch64": "'@@+_repo_rules+macos_sdk//:sysroot'",
                 "darwin-x86_64": "'@@+_repo_rules+macos_sdk//:sysroot'",
                 "linux-aarch64": "'@@+_repo_rules+arm64_buildroot_linux_musl//:sysroot'",
-                "linux-x86_64": "'@@+_repo_rules+jessie_amd64_sysroot//:sysroot'"
+                "linux-x86_64": "'@@+_repo_rules+amd64_buildroot_linux_musl//:sysroot'"
               }
             }
           }
@@ -885,13 +885,13 @@
         "recordedRepoMappingEntries": [
           [
             "",
-            "arm64_buildroot_linux_musl",
-            "+_repo_rules+arm64_buildroot_linux_musl"
+            "amd64_buildroot_linux_musl",
+            "+_repo_rules+amd64_buildroot_linux_musl"
           ],
           [
             "",
-            "jessie_amd64_sysroot",
-            "+_repo_rules+jessie_amd64_sysroot"
+            "arm64_buildroot_linux_musl",
+            "+_repo_rules+arm64_buildroot_linux_musl"
           ],
           [
             "",
