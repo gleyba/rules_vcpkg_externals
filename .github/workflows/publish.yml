@@ -1,0 +1,42 @@
+name: publish_binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15, macos-13]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: bazelbuild/setup-bazelisk@v3
+    - uses: ConorMacBride/install-package@v1
+      with:
+        apt: lld
+    - name: Build Binaries
+      run: bazel run //:install_zips -c opt -- $(pwd)/zips
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: rules_vcpkg_external_toolchains
+        path: zips/*.zip
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: rules_vcpkg_external_toolchains/*.zip
+          tag_name: ${{ inputs.version }}
+          body: "Release of rules_vcpkg_external_toolchains ${{ inputs.version }}."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

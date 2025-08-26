@@ -1,4 +1,4 @@
-platform(
+config_setting(
     name = "linux_amd64",
     constraint_values = [
         "@platforms//os:linux",
@@ -7,7 +7,7 @@ platform(
     visibility = ["//visibility:public"],
 )
 
-platform(
+config_setting(
     name = "linux_arm64",
     constraint_values = [
         "@platforms//os:linux",
@@ -16,7 +16,7 @@ platform(
     visibility = ["//visibility:public"],
 )
 
-platform(
+config_setting(
     name = "macos_amd64",
     constraint_values = [
         "@platforms//os:macos",
@@ -25,7 +25,7 @@ platform(
     visibility = ["//visibility:public"],
 )
 
-platform(
+config_setting(
     name = "macos_arm64",
     constraint_values = [
         "@platforms//os:macos",

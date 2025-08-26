@@ -181,7 +181,6 @@ http_archive(
 bazel_dep(name = "toolchains_llvm", version = "1.4.0")
 
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
-
 llvm.toolchain(
     name = "llvm_toolchain",
     cxx_standard = {"": "c++17"},
