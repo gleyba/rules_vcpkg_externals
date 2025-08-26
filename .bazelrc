@@ -29,4 +29,7 @@ build:linux --cxxopt -D_LIBCPP_HAS_MUSL_LIBC=1
 build:linux --host_cxxopt -D_LIBCPP_HAS_MUSL_LIBC=1
 build:linux --host_linkopt -static
 
+build:macos --action_env MACOSX_DEPLOYMENT_TARGET=13.0
+build:macos --macos_minimum_os=13.0
+
 common --downloader_config=bazel_downloader.cfg

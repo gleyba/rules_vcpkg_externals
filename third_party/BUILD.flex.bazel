@@ -16,6 +16,9 @@ configure_make(
         "@//scripts:ar_wrapper",
     ],
     configure_in_place = True,
+    configure_options = [
+        "--disable-libf",  
+    ],
     env = {
         "M4": "$$EXT_BUILD_ROOT/$(M4)",
         "YACC": "$$EXT_BUILD_ROOT/$(BISON)",

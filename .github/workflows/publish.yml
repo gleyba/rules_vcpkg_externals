@@ -32,8 +32,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: rules_vcpkg_externals/*.zip
+          files: rules_vcpkg_external_toolchains/*.zip
           tag_name: ${{ inputs.version }}
-          body: "Release of rules_vcpkg_externals ${{ inputs.version }}."
+          body: "Release of rules_vcpkg_external_toolchains ${{ inputs.version }}."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
