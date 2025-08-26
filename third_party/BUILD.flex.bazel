@@ -17,7 +17,7 @@ configure_make(
     ],
     configure_in_place = True,
     configure_options = [
-        "--disable-libf",  
+        "--disable-libfl",  
     ],
     env = {
         "M4": "$$EXT_BUILD_ROOT/$(M4)",
