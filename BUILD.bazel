@@ -163,7 +163,7 @@ install_zips(
     name = "install_zips",
     platform_suffix = select({
         "//platforms:linux_amd64": "linux.amd64",
-        "//platforms:linux_arm64": "linux.ard64",
+        "//platforms:linux_arm64": "linux.arm64",
         "//platforms:macos_amd64": "macos.amd64",
         "//platforms:macos_arm64": "macos.arm64",
     }),
