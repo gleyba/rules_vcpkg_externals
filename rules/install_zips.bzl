@@ -11,10 +11,10 @@ def _install_zips_impl(ctx):
             "set -euo pipefail",
             "mkdir -p $1",
         ] + [
-            "install %s $1/%s.%s.zip" % (
-                zip_file.basename,
-                paths.replace_extension(zip_file.basename, ""),
-                ctx.attr.file_postfix,
+            "install {basename} $1/{stem}.{platform_suffix}.zip".format(
+                platform_suffix = ctx.attr.platform_suffix,
+                basename = zip_file.basename,
+                stem = paths.replace_extension(zip_file.basename, ""),   
             )
             for zip_file in ctx.files.zips
         ]),
@@ -35,7 +35,7 @@ install_zips = rule(
             allow_files = True,
             doc = "List of zip files to install.",
         ),
-        "file_postfix": attr.string(
+        "platform_suffix": attr.string(
             mandatory = True,
         ),
     },

@@ -161,7 +161,7 @@ pkg_zip(
 
 install_zips(
     name = "install_zips",
-    file_postfix = select({
+    platform_suffix = select({
         "//platforms:linux_amd64": "linux.amd64",
         "//platforms:linux_arm64": "linux.amd64",
         "//platforms:macos_amd64": "macos.amd64",

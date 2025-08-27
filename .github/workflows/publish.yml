@@ -22,9 +22,12 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: rules_vcpkg_externals-${{ matrix.os }}
-        path: zips/*.zip
+        path: zips/*
   release:
     needs: build
+    permissions:
+      contents: write # Write access to contents for this job
+      packages: write # Write access to packages for this job
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
@@ -32,8 +35,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: rules_vcpkg_externals-*/*.zip
+          files: rules_vcpkg_externals-*/*
           tag_name: ${{ inputs.version }}
-          body: "Release of rules_vcpkg_external_toolchains ${{ inputs.version }}."
+          body: "Release of rules_vcpkg_externals ${{ inputs.version }}."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
