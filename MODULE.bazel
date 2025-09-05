@@ -71,14 +71,6 @@ use_repo(bison, "bison")
 
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-http_archive(
-    name = "macos_sdk",
-    build_file = "//third_party:BUILD.MacOSX.sdk.bazel",
-    sha256 = "c15cf0f3f17d714d1aa5a642da8e118db53d79429eb015771ba816aa7c6c1cbd",
-    strip_prefix = "MacOSX15.5.sdk",
-    url = "https://github.com/joseluisq/macosx-sdks/releases/download/15.5/MacOSX15.5.sdk.tar.xz",
-)
-
 _SYSROOT_BUILD_CONTENT = """\
 filegroup(
     name = "sysroot",
@@ -187,14 +179,6 @@ llvm.toolchain(
     # llvm_versions = LLVM_VERSIONS,
     llvm_version = "19.1.6",
 )
-# llvm.sysroot(
-#     name = "llvm_toolchain",
-#     label = "@macos_sdk//:sysroot",
-#     targets = [
-#         "darwin-aarch64",
-#         "darwin-x86_64",
-#     ],
-# )
 llvm.sysroot(
     name = "llvm_toolchain",
     label = "@arm64_buildroot_linux_musl//:sysroot",
